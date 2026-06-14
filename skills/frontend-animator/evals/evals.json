@@ -1,0 +1,23 @@
+{
+  "skill_name": "frontend-animator",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "I have a React + Tailwind SaaS homepage hero that feels static. Make it feel premium and Apple-level without turning it into a noisy demo: add tasteful text motion, a glass CTA/card treatment, and micro-interactions. Use smart JavaScript only where it improves the result, and explain the library/technique choice.",
+      "expected_output": "A concrete motion direction and implementation plan or code that uses an appropriate small set of techniques, includes text motion and glass treatment, respects performance and reduced motion, and avoids unnecessary dependencies.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "This existing product dashboard has janky modal, tab, and filter-list transitions. Review how you would fix the motion so it feels iOS-smooth on desktop and mobile. Prefer CSS or the existing animation library unless there is a strong reason to add another dependency. Include what to test for rapid repeated interactions and accessibility.",
+      "expected_output": "A pragmatic production-focused plan that identifies suitable CSS/library patterns for modal, tab, and list transitions, defines timing/easing or spring behavior, handles interrupts, includes cleanup concerns, and lists performance/accessibility verification.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We are building a design-led landing page section with scroll-driven storytelling, kinetic headline reveals, and a subtle liquid-glass product mockup. Recommend the animation stack and write a concise motion spec. Compare Motion, GSAP, Anime.js, Lottie/Rive, and any component libraries only if they are actually useful here.",
+      "expected_output": "A library decision with clear tradeoffs for scroll choreography, text motion, and glass effects; a tasteful motion spec with timings/staging/reduced-motion fallbacks; and guidance on avoiding over-heavy or immature packages.",
+      "files": []
+    }
+  ]
+}

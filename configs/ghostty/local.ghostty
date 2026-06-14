@@ -1,0 +1,48 @@
+# Local Ghostty config for this Mac
+
+# Start Ghostty terminals in a new tmux session rooted at the active tmux pane's directory.
+command = /Users/leonardopereira/.config/ghostty/new-tmux-session
+working-directory = inherit
+
+# tmux integration - send save-buffer command
+keybind = cmd+s=text:\x01\x73
+
+# tmux prefix to toggle zoom on current pane
+keybind = cmd+b=text:\x01\x7a
+
+# behavior
+confirm-close-surface = false
+macos-titlebar-proxy-icon = hidden
+shell-integration = detect
+shell-integration-features = no-title
+tab-inherit-working-directory = true
+window-inherit-working-directory = false
+split-inherit-working-directory = false
+
+# aesthetics
+window-padding-x = 10
+window-padding-y = 10,0
+background-opacity = 0.85
+background-blur=16
+palette = 0=#15161e
+palette = 1=#f7768e
+palette = 2=#9ece6a
+palette = 3=#e0af68
+palette = 4=#7aa2f7
+palette = 5=#bb9af7
+palette = 6=#7dcfff
+palette = 7=#a9b1d6
+palette = 8=#414868
+palette = 9=#f7768e
+palette = 10=#9ece6a
+palette = 11=#e0af68
+palette = 12=#7aa2f7
+palette = 13=#bb9af7
+palette = 14=#7dcfff
+palette = 15=#c0caf5
+background = #1a1b26
+foreground = #c0caf5
+cursor-color = #c0caf5
+cursor-text = #15161e
+selection-background = #33467c
+selection-foreground = #c0caf5
