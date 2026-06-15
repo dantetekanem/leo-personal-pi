@@ -20,9 +20,9 @@ The lead does not do the repository work itself. It inspects only enough context
 7. Keep ADA current with durable state, not chat noise: scope, assumptions, constraints, files, errors, agent assignments, findings, decisions, blockers, changed paths, verification commands, risks, open questions, and evidence provenance. Use targeted `ada_get`/`ada_update` and checkpoints.
 8. Give every teammate a bounded mission, concrete files or search targets when known, matching specialist role or skill, ADA artifact ID/folder/context, team task ID, and explicit stop conditions.
 9. The lead owns coordination and acceptance. Teammates report findings and patches; the lead decides what to accept and assigns any follow-up work to agents instead of doing it solo.
-10. Active agent control is the lead's first priority after spawning. Do not keep coding, reading deeply, or planning privately while teammates are running; monitor status, process inbox messages, correct drift, route discoveries, update ADA/tasks, and shut down completed agents.
-11. Monitor actively as the default work mode while teammates are running. Do an immediate status/inbox pass after spawning, then check teammate status and inbox repeatedly during active work. Act on messages before doing more lead-side orchestration.
-12. Do not let agents hang forever. If a teammate is silent beyond the expected interval, nudge once with a concrete request. If they remain stalled, exceed a stop condition, or request shutdown after a complete report, capture the current state, approve shutdown when appropriate, and reassign or proceed with the evidence available.
+10. Active agent control is the lead's first priority after spawning, but the lead must not fake progress by sleeping, busy-waiting, or creating ad hoc scheduler loops for team completion. pi-extended-teams owns idle inbox/report monitoring through the extension UI and auto-wake behavior.
+11. After spawning, do one immediate status/inbox pass. If there is independent lead work that does not duplicate teammate scope, do it. If there is no independent leader work, stop the turn and let the extension wake the lead when team reports arrive; do not message the user with interim status just to fill the wait.
+12. Do not let agents hang forever. Use extension-owned health signals, `/team`, `list_teammates`, or `check_teammate` only for explicit liveness diagnosis or a suspected stall. If a teammate is stalled, nudge once with a concrete request. If they remain stalled, exceed a stop condition, or request shutdown after a complete report, capture the current state, approve shutdown when appropriate, and reassign or proceed with the evidence available.
 13. For every durable issue/task sourced from a report, backlog finding, security concern, bug claim, or testing gap, assign one capable issue-owner agent by default. That single agent should confirm whether the issue is real, research the issue contents, identify the smallest evidence-backed path, and, when the overall task is edit-allowed and the issue is confirmed, implement the fix within the same assignment. Use separate agents only for genuinely separate context lanes, independent research topics, or focused specialist perspectives such as security, testing strategy, third-party/library context, or production readiness.
 14. Ask User concise questions when required to resolve ambiguity, approve risk, choose product behavior, authorize side effects, or continue past scope. Do not silently choose actions that need User approval.
 15. Shut teammates down when their final report is captured. Do not leave idle panes or orphaned agents running; use individual shutdown approval or team shutdown as soon as no follow-up is pending.
@@ -272,22 +272,25 @@ Next action: <recommendation>
 Done: <yes/no, and shutdown requested if done>
 ```
 
-## Monitoring Loop
+## Agent Completion and Lead Wakeup
 
-During active team work, this loop has priority over any lead-side private work. Start it immediately after spawning and repeat until every teammate is either actively assigned, blocked with a routed decision, or shut down:
+pi-extended-teams owns routine waiting. The extension watches the lead inbox while the lead is idle, updates the team UI, and wakes the lead when teammate reports are ready. The lead should not create raw sleeps, shell waits, or separate LoopCreate polling just to notice team completion.
 
-1. Call `check_teammate` for each teammate.
-2. Call `read_inbox` for new messages.
-3. Process every inbox message before continuing other work.
-4. Classify each update: progress, blocker, final report, drift, or shutdown request.
-5. For blockers, decide whether to answer from existing scope, route to another teammate, ask User, or stop.
-6. For progress, update the team task and ADA only with meaningful state changes.
-7. For final reports, capture summary/evidence/changed paths/risks in ADA, update the task, then approve shutdown unless follow-up is pending.
-8. For drift, send one precise correction that restates scope and stop conditions.
-9. Broadcast ADA-relevant discoveries that affect multiple teammates.
-10. Keep the evidence ledger current: claim, source, file/command, verification status, and remaining uncertainty.
+Use this rhythm:
 
-Do not use raw sleeping or private busy-work as a substitute for controller mode. If a teammate is silent beyond the expected interval, send one concise nudge with the exact update needed. If they remain stalled after the nudge, exceed a stop condition, or appear hung, do not wait forever: capture what is known in ADA, shut them down when appropriate, and reassign the task or ask User if a decision is needed.
+1. After spawning, do one immediate status/inbox pass with `list_teammates`, `/team`, or `read_inbox` only if useful.
+2. Process any inbox messages already present before moving on.
+3. If there is independent leader work, do that work while teammates run. Independent work means planning, integration prep, or unrelated coordination that does not duplicate the teammates' assigned investigation/test/review lane.
+4. If there is no independent leader work, stop the turn. Let the extension wake the lead when reports arrive.
+5. When woken by reports, call `read_inbox`, classify each update as progress, blocker, final report, drift, or shutdown request, and act on it.
+6. For blockers, decide whether to answer from existing scope, route to another teammate, ask User, or stop.
+7. For progress, update the team task and ADA only with meaningful state changes.
+8. For final reports, capture summary/evidence/changed paths/risks in ADA, update the task, then approve shutdown unless follow-up is pending.
+9. For drift, send one precise correction that restates scope and stop conditions.
+10. Broadcast ADA-relevant discoveries only when they affect multiple teammates.
+11. Keep the evidence ledger current: claim, source, file/command, verification status, and remaining uncertainty.
+
+Use `check_teammate` for targeted liveness diagnosis only: suspected stall, stale heartbeat, missing report after a reasonable interval, or explicit User request. Do not poll it as a normal monitoring loop. If a teammate is silent beyond the expected interval, nudge once with a concrete request. If they remain stalled, exceed a stop condition, or appear hung, capture what is known in ADA, shut them down when appropriate, and reassign the task or ask User if a decision is needed.
 
 ## Integration Rules
 
