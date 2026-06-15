@@ -1,7 +1,7 @@
 # Local Ghostty config for this Mac
 
 # Start Ghostty terminals in a new tmux session rooted at the active tmux pane's directory.
-command = /Users/leonardopereira/.config/ghostty/new-tmux-session
+command = ~/.config/ghostty/new-tmux-session
 working-directory = inherit
 
 # tmux integration - send save-buffer command

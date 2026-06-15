@@ -1,2 +1,2 @@
 # Load local Ghostty settings for this Mac.
-config-file = /Users/leonardopereira/.config/ghostty/local.ghostty
+config-file = ~/.config/ghostty/local.ghostty

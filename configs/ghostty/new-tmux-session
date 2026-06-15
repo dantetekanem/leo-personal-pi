@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-current_dir="$(env -u TMUX /opt/homebrew/bin/tmux display-message -p -F '#{pane_current_path}' 2>/dev/null || true)"
+current_dir="$(env -u TMUX tmux display-message -p -F '#{pane_current_path}' 2>/dev/null || true)"
 
 if [[ -z "$current_dir" || ! -d "$current_dir" ]]; then
   if [[ -n "${PWD:-}" && "$PWD" != "/" && -d "$PWD" ]]; then
@@ -12,4 +12,4 @@ if [[ -z "$current_dir" || ! -d "$current_dir" ]]; then
   fi
 fi
 
-exec /opt/homebrew/bin/tmux new-session -c "$current_dir"
+exec tmux new-session -c "$current_dir"
