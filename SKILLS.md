@@ -11,14 +11,15 @@ My personal Pi skills. Entries link to the skill folder in this repo. Skills mar
 | 5 | frontend-design **(Anthropic)** | [anthropics/skills · frontend-design](https://github.com/anthropics/skills/tree/main/skills/frontend-design) |
 | 6 | home-assistant-manager | [skills/home-assistant-manager](./skills/home-assistant-manager) |
 | 7 | javascript-engineer | [skills/javascript-engineer](./skills/javascript-engineer) |
-| 8 | pre-launch-expert | [skills/pre-launch-expert](./skills/pre-launch-expert) |
-| 9 | quality-expert | [skills/quality-expert](./skills/quality-expert) |
-| 10 | rails-engineer | [skills/rails-engineer](./skills/rails-engineer) |
-| 11 | rails-testing-engineer | [skills/rails-testing-engineer](./skills/rails-testing-engineer) |
-| 12 | react-engineer | [skills/react-engineer](./skills/react-engineer) |
-| 13 | refactor-expert | [skills/refactor-expert](./skills/refactor-expert) |
-| 14 | security-expert | [skills/security-expert](./skills/security-expert) |
-| 15 | skill-creator **(Anthropic)** | [anthropics/skills · skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator) |
-| 16 | task-manager | [skills/task-manager](./skills/task-manager) |
-| 17 | team-leader | [skills/team-leader](./skills/team-leader) |
-| 18 | test-expert | [skills/test-expert](./skills/test-expert) |
+| 8 | leo-the-reviewer | [skills/leo-the-reviewer](./skills/leo-the-reviewer) |
+| 9 | pre-launch-expert | [skills/pre-launch-expert](./skills/pre-launch-expert) |
+| 10 | quality-expert | [skills/quality-expert](./skills/quality-expert) |
+| 11 | rails-engineer | [skills/rails-engineer](./skills/rails-engineer) |
+| 12 | rails-testing-engineer | [skills/rails-testing-engineer](./skills/rails-testing-engineer) |
+| 13 | react-engineer | [skills/react-engineer](./skills/react-engineer) |
+| 14 | refactor-expert | [skills/refactor-expert](./skills/refactor-expert) |
+| 15 | security-expert | [skills/security-expert](./skills/security-expert) |
+| 16 | skill-creator **(Anthropic)** | [anthropics/skills · skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator) |
+| 17 | task-manager | [skills/task-manager](./skills/task-manager) |
+| 18 | team-leader | [skills/team-leader](./skills/team-leader) |
+| 19 | test-expert | [skills/test-expert](./skills/test-expert) |
