@@ -23,3 +23,4 @@ My personal Pi skills. Entries link to the skill folder in this repo. Skills mar
 | 17 | task-manager | [skills/task-manager](./skills/task-manager) |
 | 18 | team-leader | [skills/team-leader](./skills/team-leader) |
 | 19 | test-expert | [skills/test-expert](./skills/test-expert) |
+| 20 | prompt-cost-auditor | [skills/prompt-cost-auditor](./skills/prompt-cost-auditor) |
