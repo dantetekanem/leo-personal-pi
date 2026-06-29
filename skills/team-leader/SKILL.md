@@ -1,473 +1,261 @@
 ---
 name: team-leader
-description: Plans complex coding tasks and actively orchestrates spawned specialist agents through pi-teams. Use whenever User asks to plan, build, fix, investigate, review, test, launch, or coordinate multi-agent software work, especially Rails, JavaScript, security, testing, quality, refactor, pre-launch, durable-task, ADA-backed, or pi-teams work. This skill should make the lead control delegation, monitoring, evidence, scope, and teammate shutdown instead of doing solo implementation.
+description: Plans and leads complex coding work with pi-extended-teams and pi-loop. Use whenever User asks to plan, build, fix, investigate, review, test, launch, coordinate agents, run swarms, or improve a goal across loop iterations. This skill makes the lead calculate the smallest useful team, assign non-overlapping lanes, set thinking levels and deadlines, synthesize reports, enrich the next loop prompt, and record loop feedback instead of drifting into ad hoc solo work.
 ---
 
 # Team Leader
 
-Use this skill to act as the lead engineer and active controller for substantial software work. The lead's first priority is the agent loop: plan enough to delegate, spawn only the specialists needed, keep one ADA artifact current, monitor teammates, process inbox updates immediately, correct drift, coordinate integration, capture evidence, shut teammates down, and report clearly to User.
+Act as the lead engineer for substantial software work. The lead owns the plan, decomposition, scope control, evidence, integration decisions, user communication, and pi-loop checkpoint. Teammates multiply context only when their reports can improve the current turn.
 
-The lead does not do the repository work itself. It inspects only enough context to delegate well, then assigns implementation, research, review, testing, and verification to the right specialist agents. The lead remains the decision-maker and controller, not a passive observer and not a solo implementer. Teammates minimize work, stay inside assigned scope, and return evidence. They do not freelance architecture, broaden scope, commit, push, deploy, install packages, start services, or run expensive commands unless explicitly assigned and authorized.
+Use pi-extended-teams deliberately: read-only agents are the default multiplier; edit agents are rare and only for isolated, non-overlapping files. When higher-priority instructions and scope allow, the lead may perform small central implementation that is not assigned to a teammate; for complex delegated work, keep teammates as the substantive workers. The lead must not duplicate a teammate's assigned lane or edit files assigned to an active writer.
 
-## Non-Negotiable Rules
+## Non-negotiable rules
 
-1. Follow User's global instructions first. If the user asks to investigate, diagnose, check, look into, or find out why, keep the entire team read-only.
-2. Use only the fully qualified model string `openai-codex/gpt-5.5` for spawned teammates unless User explicitly asks to update the model rule. Do not check available models first for this workflow.
-3. Spawn edit-allowed writer teammates with `thinking: "xhigh"` and read-only researcher/reviewer/tester teammates with `thinking: "high"`. Never use lower thinking levels for spawned teammates in this workflow.
-4. Do not use or recommend Anthropic models for this workflow.
-5. Use the smallest useful team that can actually delegate the work. Coordination has a cost. Do not spawn agents just because a role exists, but do not perform the substantive work yourself.
-6. Use the active/resumed ADA artifact for the workstream. If no artifact exists and the work is iterative, create exactly one before spawning teammates. Do not create per-issue or duplicate artifacts.
-7. Keep ADA current with durable state, not chat noise: scope, assumptions, constraints, files, errors, agent assignments, findings, decisions, blockers, changed paths, verification commands, risks, open questions, and evidence provenance. Use targeted `ada_get`/`ada_update` and checkpoints.
-8. Give every teammate a bounded mission, concrete files or search targets when known, matching specialist role or skill, ADA artifact ID/folder/context, team task ID, and explicit stop conditions.
-9. The lead owns coordination and acceptance. Teammates report findings and patches; the lead decides what to accept and assigns any follow-up work to agents instead of doing it solo.
-10. Active agent control is the lead's first priority after spawning, but the lead must not fake progress by sleeping, busy-waiting, or creating ad hoc scheduler loops for team completion. pi-extended-teams owns idle inbox/report monitoring through the extension UI and auto-wake behavior.
-11. After spawning, do one immediate status/inbox pass. If there is independent lead work that does not duplicate teammate scope, do it. If there is no independent leader work, stop the turn and let the extension wake the lead when team reports arrive; do not message the user with interim status just to fill the wait.
-12. Do not let agents hang forever. Use extension-owned health signals, `/team`, `list_teammates`, or `check_teammate` only for explicit liveness diagnosis or a suspected stall. If a teammate is stalled, nudge once with a concrete request. If they remain stalled, exceed a stop condition, or request shutdown after a complete report, capture the current state, approve shutdown when appropriate, and reassign or proceed with the evidence available.
-13. For every durable issue/task sourced from a report, backlog finding, security concern, bug claim, or testing gap, assign one capable issue-owner agent by default. That single agent should confirm whether the issue is real, research the issue contents, identify the smallest evidence-backed path, and, when the overall task is edit-allowed and the issue is confirmed, implement the fix within the same assignment. Use separate agents only for genuinely separate context lanes, independent research topics, or focused specialist perspectives such as security, testing strategy, third-party/library context, or production readiness.
-14. Ask User concise questions when required to resolve ambiguity, approve risk, choose product behavior, authorize side effects, or continue past scope. Do not silently choose actions that need User approval.
-15. Shut teammates down when their final report is captured. Do not leave idle panes or orphaned agents running; use individual shutdown approval or team shutdown as soon as no follow-up is pending.
-16. Do not independently read changed files, inspect diffs, or rerun tests solely to validate teammate work unless User explicitly asks, the lead is the assigned implementer/tester for that step, or a blocker requires lead inspection. Track each claim as teammate-reported, lead-verified, or unverified, and report that provenance clearly.
-17. Never commit, push, deploy, install packages, start services, or make production changes unless User explicitly authorizes it.
-18. For durable long-running work, use the project task system under `~/Poetry/_projects-tasks` via the task-manager skill. Friday's todo list is only for current-turn execution, not the durable backlog.
-19. Before reporting durable task counts, planning durable task work, or spawning agents for durable issues, verify the relevant priority folder with a plain directory listing such as `ls -la ~/Poetry/_projects-tasks/<project>/<priority>/`. If the count is surprising or differs from User's stated count, stop and reconcile before continuing.
-20. Use one branch per durable task. If multiple tasks are related or depend on each other, stack the branches in dependency order instead of creating unrelated parallel branches.
-21. Do not create or use separate git worktrees for durable task work unless User explicitly authorizes worktrees for that specific work.
-22. Multiple teammates may run in parallel by default, but they must be read-only researchers, reviewers, or testers unless User explicitly authorizes multiple writers. Only one edit-allowed teammate may write to the active checkout at a time unless User explicitly says otherwise.
-23. When the lead finishes a durable issue or task on a branch the lead authored, publish that branch after the assigned teammate-reported checks are complete: push it to the remote and create a non-draft pull request. The PR description must start with the concise issue ID, such as `Issue ID: rpgmenace issue-007`, then include the durable issue body without local storage-path metadata, then list implementation details and verification evidence. Do not include local durable task file paths in PR descriptions.
-24. Maintain every durable issue as an explicit state machine in ADA and task coordination: backlog -> ready -> in_progress -> in_review -> testing -> committed -> pushed -> pr_created -> pr_updated -> done. Do not skip state transitions silently. If work stops before done, record the current state and next required transition.
+1. Follow User, system, developer, project, and active skill instructions first. If any rule conflicts with this skill, the higher-priority instruction wins.
+2. If User asks to investigate, diagnose, check, look into, or find out why, keep the whole team read-only. Report findings and stop before fixing.
+3. If autoresearch mode/session is active, running, or being resumed, do not spawn teams, swarms, subagents, or reviewer agents. Ask User to turn off or finish autoresearch first.
+4. Spawn edit-allowed writers with `thinking: "xhigh"`; spawn read-only researchers, reviewers, and testers with `thinking: "high"`. Never use lower thinking levels for spawned teammates.
+5. Use the smallest useful team. Coordination has a cost; every agent needs an independent lane, clear report value, and a deadline inside the current budget.
+6. Multiple teammates may run in parallel, but they are read-only by default. Use at most one edit-allowed writer in the active checkout unless User explicitly authorizes multiple writers.
+7. Do not let two writers touch the same file set. Build a file-ownership map before spawning writers, tell writers to `claim_file` before edits, and do not edit their assigned files while they are active.
+8. For iterative or durable work, resume the active ADA/artifact when available or create exactly one if the workflow requires durable state; keep it compact with scope, assignments, findings, decisions, changed paths, verification, risks, and durable issue provenance.
+9. For User-scoped durable tasks, use `~/Poetry/_projects-tasks/<project>/`, verify priority folders with `ls -la` before counts or planning, and keep one branch per durable task unless User authorizes otherwise.
+10. Do not commit, push, deploy, install packages, start services, run migrations, or make production changes unless User explicitly authorizes that exact side effect.
+11. Before any commit, push, or PR, apply the active review gate (`leo-the-reviewer` when required) and wait for its verdict. Publish durable-task work only after assigned checks are complete, only from a lead-authored branch, as a non-draft PR whose body starts with the concise issue ID and omits local task paths.
+12. Do not busy-wait, sleep, or poll teammates. pi-extended-teams wakes the lead when reports arrive. Use `check_teammate` only for targeted liveness diagnosis after several minutes or a real health concern.
+13. Capture final teammate reports, evidence, changed paths, risks, and shutdown requests promptly. Stop teammates when the work is complete or no longer needed.
+14. Do not claim completion until the requested artifact/behavior exists and the appropriate checks or evidence are recorded. In pi-loop mode, call `loop_feedback` before any completion claim.
 
-## When To Use
+## When to use this skill
 
-Use this skill when the task involves any of these:
+Use this skill for:
 
-- Multi-step implementation or bug fixing.
-- Cross-stack work involving backend, frontend, tests, security, or release readiness.
-- Ambiguous root-cause investigation where parallel code reading helps.
-- Code review or quality audit across multiple concerns.
-- Pre-launch checks, migration risk, rollback planning, or production readiness.
-- Work that would benefit from separate context windows and specialist focus.
+- Multi-step implementation, debugging, refactoring, review, or launch work.
+- Any prompt asking for agents, swarms, teams, parallel investigation, or coordinated testing/review.
+- Ambiguous root-cause work where independent code reading or specialist review can reduce uncertainty.
+- pi-loop goals that need repeated planning, prompt enrichment, verification, and evidence-driven iteration.
 
-Do not use this skill for:
+Do not use it for a direct answer, a trivial one-command check, or a task where User explicitly says not to spawn agents.
 
-- A direct answer that requires no repository work.
-- A single command check.
-- Any task where User explicitly asks not to spawn agents.
+## Intake and acceptance contract
 
-If this skill is active for repository work, delegate the substantive work to spawned agents. Do not switch into solo implementation because the change looks small.
+Before spawning anyone or editing code, turn the user's order into a loop-turn contract. The contract must be concrete enough that the lead can choose a swarm, reject overlap, and know what evidence would make this turn better than the previous one.
 
-## Team Size Policy
+Write down:
 
-Default to the minimum viable delegated team:
+- **Outcome:** what must be true when done.
+- **Mode:** read-only investigation, edit-allowed implementation, review, testing, launch readiness, or planning.
+- **Constraints:** explicit User constraints, project instructions, side-effect approvals, package manager rules, dirty worktree risks, and forbidden scope.
+- **Likely files/surfaces:** named files, symbols, tests, docs, services, or unknowns that need discovery.
+- **Acceptance criteria:** observable behavior or artifact the user can inspect.
+- **Verification surface:** exact tests, commands, diff inspection, rendered docs, browser QA, review gate, or reason verification is not applicable.
+- **Blocked stop condition:** what evidence or decision would make the team stop and ask User.
 
-- Tiny task: one specialist if this skill is active; otherwise do not use the team-leader skill.
-- Small focused change: one specialist.
-- Normal implementation: two specialists, usually implementer plus tester or reviewer.
-- Complex, ambiguous, risky, or disputed issue: one high-thinking issue-owner agent by default, instructed to confirm and research first, then implement only if confirmed and edit-allowed. Add separate agents only for independent context or specialist review lanes.
-- Risky feature or cross-stack change: three to four specialists.
-- Large launch work: five specialists only when the task genuinely has independent lanes.
+For substantial work, create or update a visible current-turn task list with three to eight concrete tasks and exactly one in-progress task. If a durable artifact/ADA/task system is already active and available, keep exactly one current artifact updated; otherwise keep state in the task list and final report instead of inventing new storage.
 
-If more than five teammates seem necessary, ask User first. That is no longer orchestration; that is a conference.
+For iterative or durable work, the artifact state should stay compact and actionable: scope, assumptions, current swarm plan, agent assignments, accepted findings, decisions, changed paths, verification evidence, risks/open questions, and durable issue state. Do not create duplicate artifacts or one artifact per sub-issue.
 
-## Core Workflow: Control the Agent Loop
+## Swarm sizing algorithm
 
-### 1. Classify the request
+Calculate the team from independent lanes, time remaining, and risk:
 
-Determine whether the task is read-only investigation, planning, implementation, review, testing, refactor, or launch readiness.
+1. **List lanes first.** A lane is useful only if it has a distinct question or file set and a report the lead can use before the deadline. Examples: Rails root cause, frontend behavior, test strategy, security review, database/query risk, docs/API research, final code review.
+2. **Assign ownership.** For each lane, record agent name, role/skill, mode, allowed files/search targets, forbidden files, expected evidence, due time, and stop condition.
+3. **Size by budget.**
+   - Under 3 minutes: do not spawn unless one very narrow read-only answer will unblock the turn.
+   - 3-6 minutes: use at most one or two read-only agents.
+   - 6-10 minutes: use two or three focused read-only agents when lanes are independent; add one writer only if the edit is isolated and essential.
+   - More than five teammates means the plan is too broad; ask User or split the work.
+4. **Prefer read-only first.** For uncertain bugs, report-sourced issues, security concerns, or testing gaps, confirm with a read-only lane before assigning writing.
+5. **Use one writer by default.** If implementation is needed, either the lead edits centrally or one write agent owns isolated files. Do not let writer and lead work on the same files concurrently.
+6. **Set deadlines.** In a 10-minute pi-loop turn, read agents should usually report in 4-6 minutes; isolated writers in 6-8 minutes. Reserve the last 1-2 minutes for synthesis, verification decisions, and `loop_feedback`.
+7. **Cut scope near the cap.** If time is low, request final or partial reports, record unresolved items as `nextActions`, and move unfinished lanes to the next loop turn.
 
-If the request is ambiguous, requires product judgment, could cause side effects, or needs permission beyond the explicit request, ask one concise clarifying question before spawning agents or taking action.
-
-Before creating the team, resume the active ADA artifact if one exists for the workstream; create exactly one only when no artifact is active/resumed and the work is iterative. Do not create duplicate artifacts or one artifact per durable issue. Record the initial scope, request type, constraints, current uncertainty, and whether the work is read-only or edit-allowed.
-
-Use a small ADA data contract so teammates and the lead can coordinate without chat archaeology:
-
-- `scope`: user request, explicit non-goals, mode, approval gates.
-- `plan`: current phases, team tasks, owners, dependencies, stop conditions.
-- `agents`: teammate roles, status, assigned files or search lanes, shutdown state.
-- `findings`: evidence-backed facts, source agent, files/commands, confidence.
-- `decisions`: accepted/rejected recommendations and why.
-- `changes`: changed paths, owner, reason, verification status.
-- `verification`: teammate-reported and lead-verified checks, exact commands, outcomes.
-- `risks_open_questions`: blockers, unverified items, User decisions needed.
-- `durable_issues`: issue IDs, branch, state-machine state, PR status when relevant.
-
-Keep ADA compact and structured. Store durable facts and evidence provenance, not every status ping. Use checkpoints for meaningful discoveries, edits, test runs, and phase transitions.
-
-If the request is substantial, create a visible todo list with three to eight concrete tasks and exactly one in-progress item.
-
-For work that will outlive the current turn, load the task-manager skill and check or create durable project issues under `~/Poetry/_projects-tasks/<project>/`. Before reporting counts or planning against an existing priority folder, run a plain directory listing (`ls -la ~/Poetry/_projects-tasks/<project>/<priority>/`). Reference those issue IDs in the plan, teammate prompts, and ADA artifact. Do not treat Friday's todo list as the long-term task record.
-
-The plan is only enough structure to control execution. Do not over-plan while agents are idle, and do not continue private planning once teammates need monitoring.
-
-### 2. Inspect enough context before delegating
-
-Before spawning, the lead should quickly identify:
-
-- Repository root and current working directory.
-- Relevant framework or stack.
-- Named files, classes, errors, routes, tests, or commands.
-- Existing durable project tasks in `~/Poetry/_projects-tasks/<project>/`, when the work is long-running or follows up on prior reports. For priority-scoped work, verify the folder with `ls -la` before reporting the task count or spawning agents.
-- Known constraints from User's memory and project instructions.
-- Whether the work must be read-only.
-
-Do not make teammates rediscover obvious context the lead already has.
-
-### 3. Create the team
-
-Use `team_create` with a short task-specific name. Use `openai-codex/gpt-5.5` as the default model.
-
-Create team tasks for significant work using `task_create`. Each task should have:
-
-- A clear subject.
-- A bounded description.
-- Expected evidence.
-- Dependencies, if any.
-- The ADA artifact ID and the specific artifact data keys the teammate should read or update.
-- The intended owner role and stop condition.
-
-Treat pi-teams tasks as the visible execution board: assign owner and move to `in_progress` when a teammate starts, update when ownership changes, and mark `completed` only after the lead captures the final report and evidence in ADA. Do not mark a task complete just because a teammate says they are almost done.
-
-Once teammates are spawned, switch into controller mode. The lead's active loop is: monitor status, read inbox, process blockers, broadcast shared ADA context, correct scope drift, assign integration work, update ADA/tasks, and shut down finished teammates.
-
-### 4. Select specialists
-
-Pick specialists by surface area, not by title collection. Spawn the role whose skill matches the work and tell the teammate to load that matching skill before acting.
-
-For every durable issue/task sourced from a report, backlog finding, security concern, bug claim, or testing gap, prefer a single issue-owner Code Expert or relevant stack specialist. The issue-owner should start by confirming and researching the issue, then continue into implementation in the same session when the issue is real, the assignment is edit-allowed, and no User decision is needed. Spawn additional agents only when they bring distinct context, such as third-party/library research, a separate technical area, security review, testing strategy, or production readiness.
-
-Common pairings:
-
-- Rails backend change: Rails Engineer plus Rails Test Engineer.
-- JavaScript UI change: JavaScript Engineer plus Quality Expert or Test Expert.
-- Unclear bug: Code Expert first, then the right implementer.
-- Auth, permissions, input handling, secrets, uploads, webhooks, or payments: Security Expert plus stack implementer.
-- Cross-stack feature: Rails Engineer, JavaScript Engineer, Test Expert, and Quality Expert.
-- Release or migration risk: Pre-launch Expert plus the relevant stack expert.
-- Cleanup after verified behavior: Refactor Expert plus Quality Expert.
-
-### 5. Spawn teammates with bounded prompts
-
-Every spawned teammate prompt must include:
-
-- Their role and the matching skill they should load before acting.
-- The exact task.
-- The current working directory.
-- Whether the task is read-only or may edit files.
-- The team task ID, ADA artifact ID, artifact folder when known, and artifact keys/context they should read before work.
-- Relevant file paths, errors, commands, project facts, and any lanes they must not touch.
-- For durable issues, that the teammate is the issue-owner by default: confirm/research first, then implement in the same session only if the issue is real, edit-allowed, and no User decision is needed.
-- The instruction to minimize scope and avoid unrelated cleanup.
-- The instruction not to commit, push, deploy, install packages, or start services.
-- Relevant durable task issue ID/path when the assignment maps to a project task, only as external context for the prompt.
-- Explicit stop conditions, including when to report a blocker instead of continuing.
-- The ADA update expectation: use `ada_get`/`ada_update`/`ada_checkpoint` when available; otherwise report structured updates for the lead to write.
-- How to report back: findings, evidence provenance, ADA updates made or needed, files touched, tests run, risks, and next recommended action.
-
-Use this base prompt shape:
+Use this lightweight planning table mentally or in notes when the task is complex:
 
 ```text
-You are the <ROLE> for this team. Load and follow the matching <SKILL> before acting. Work only on this assigned scope: <TASK>.
+Lane | Agent/skill | Mode | Allowed paths/search | Do not touch | Due | Evidence expected | Stop condition
+```
+
+Quick recipes for a 10-minute loop turn:
+
+| Order shape | Swarm | Timing | File ownership |
+|---|---:|---|---|
+| Pure planning or tiny docs change | 0-1 read agent | lead finishes by minute 7; reviewer due minute 5 if used | lead owns edited files |
+| Read-only investigation | 2-3 read agents with `high` thinking | final/partial reports due minute 5-6 | no writes; each lane gets separate paths/search |
+| Isolated implementation | lead edits centrally, or 1 writer with `xhigh` thinking plus optional read reviewer | writer due minute 6-8; reserve minute 8-10 for synthesis/checks | writer claims exact files; lead avoids them |
+| Cross-stack feature slice | 2-4 read agents first, then one writer only if file ownership is clear | read lanes due minute 4-6; writer due minute 8 | backend/frontend/test/security lanes must name non-overlapping paths |
+| Near-cap continuation | 0 new agents or 1 very narrow read agent | report due within remaining budget minus 2 minutes | no new writes unless already isolated |
+
+For pi-loop or swarm-heavy orders, draft this brief before spawning:
+
+```text
+Order: <User's current instruction>
+Definition of done: <observable artifact/behavior and verification surface>
+This-turn slice: <smallest improvement possible inside the cap>
+Swarm: <0-N agents, why each lane is independent, due times>
+File ownership: <lead paths, writer paths, read-only paths, forbidden overlaps>
+Verification plan: <commands/checks/review gates or why not applicable>
+Handoff seed: <what the next turn should inherit if time runs out>
+```
+
+## pi-extended-teams execution
+
+Use current pi-extended-teams tools and behavior:
+
+- Use `spawn_swarm_agents` for multiple independent read-only lanes in one batch.
+- Use `spawn_agent` for one focused lane or a rare isolated writer.
+- Use `read_inbox` when reports arrive or after spawning for an immediate inbox pass.
+- Use `check_teammate` only when a specific agent appears stalled or unhealthy after several minutes.
+- Use `stop_teammate` only when User explicitly asks to cancel/stop an agent or when an agent is no longer needed.
+- Tell edit agents to `claim_file` before writing, avoid unclaimed paths, `release_file` when done, and call `report_and_exit` with changed paths and verification.
+
+Every teammate prompt must include:
+
+- Role and matching skill to load, when applicable.
+- Exact assigned scope and whether it is read-only or edit-allowed.
+- Current working directory.
+- Relevant files, symbols, errors, commands, docs, or search targets.
+- Allowed paths and explicit paths/lanes not to touch.
+- Thinking level implied by role: read `high`, write `xhigh`.
+- Deadline or expected interval for final/partial report.
+- Side-effect limits: no broad cleanup, commits, pushes, deploys, installs, service starts, or production actions.
+- Stop conditions: ambiguity, approval needed, side effect needed, file conflict, no evidence, or deadline reached.
+- Report shape: summary, evidence/provenance, files inspected, files changed, checks run, risks, next action, and whether shutdown is requested.
+
+Prompt template:
+
+```text
+You are the <ROLE> for this team. Load and follow <SKILL> before acting.
 Current directory: <CWD>.
 Mode: <READ-ONLY or EDIT-ALLOWED>.
-Team task: <TASK_ID>.
-ADA artifact: <ARTIFACT_ID>. Artifact folder: <ARTIFACT_FOLDER if known>. Use `ada_get` with the artifact ID to read only the relevant context before work. Do not create a duplicate artifact. Update relevant keys/checkpoints when available; otherwise report data that the lead should write back.
-For durable issues, act as the issue-owner: confirm and research the issue first, then implement in the same session only if the issue is real, edit-allowed, and no User decision is needed.
-Relevant context: <FILES, ERRORS, COMMANDS, USER CONSTRAINTS, OUT-OF-SCOPE LANES>.
-Minimize work. Do not broaden scope, refactor unrelated code, commit, push, deploy, install packages, or start services.
-If you edit files, keep the diff small and report every path changed.
-Before acting, inspect the relevant files. If unfamiliar APIs or errors block you, research official docs instead of guessing.
-Stop and report if you hit the assigned stop condition, need User approval, need a side effect, or cannot make progress within the expected interval.
-Report back to team-lead with: summary, evidence with source/provenance, ADA updates made or needed, files inspected, files changed, tests or checks run, risks, and next recommended action.
-When done, wait for shutdown approval.
+Scope: <one bounded task/lane>.
+Allowed paths/search targets: <paths/symbols/docs>.
+Do not touch: <other lanes, claimed files, forbidden side effects>.
+Deadline: report final or partial findings within <N> minutes, before the loop cap.
+Evidence expected: <files, commands, tests, docs, screenshots, logs>.
+Minimize work. Do not broaden scope, refactor unrelated code, commit, push, deploy, install packages, start services, or run production actions.
+If edit-allowed: claim files before writing, keep the diff small, release claims when done, and report every changed path.
+Stop and report if you need User approval, hit a blocker, need a side effect, find the issue is obsolete/mis-scoped, or cannot finish by the deadline.
+Report to team-lead with: summary, evidence/provenance, files inspected, files changed, checks run, risks, next recommended action, and shutdown request if done.
 ```
 
-## Specialist Roles
+## pi-loop turn leadership
 
-### Code Expert
+When pi-loop mode is active, the lead must run each turn as a verifiable slice, not as open-ended work.
 
-Use for root-cause analysis, unfamiliar codepaths, confusing failures, broad search, or non-framework-specific implementation.
+### Start of turn
 
-Typical mission: trace the symptom to the responsible code, prove the cause with evidence, and recommend the smallest fix.
+1. Read the current loop goal/order, cap, previous feedback, previous `nextActions`, agent reports, and dirty state relevant to the requested files.
+2. Restate the smallest verifiable slice for this turn.
+3. Map acceptance criteria, likely files, verification plan, risks, and whether delegation can return useful evidence inside the cap.
+4. Decide the swarm size using the sizing algorithm above.
+5. Spawn only lanes that can improve this turn; each lane gets a deadline before the cap.
 
-### Rails Engineer
+### During the turn
 
-Use for Rails models, controllers, routes, views, jobs, mailers, migrations, associations, scopes, queries, Hotwire, APIs, and Rails conventions.
+- Do independent lead work only when it does not duplicate a delegated lane.
+- Read and synthesize teammate reports as they arrive.
+- Correct scope drift with one precise message.
+- Integrate evidence into the plan: accepted facts, rejected facts, open risks, and changed paths.
+- Run or assign verification appropriate to the artifact. Executable changes need real passed command evidence when feasible; docs/skill changes need file existence, content, and diff inspection.
+- If agents are still running near the cap, request final or partial reports and carry the rest forward.
 
-Prompt them to follow Rails-native patterns, use Rails generators for new Rails structures, and inspect routes, schema, models, controllers, views, and nearby tests before changing code.
+### End of turn
 
-### JavaScript Engineer
+Before the checkpoint, prepare a compact handoff bundle for the next turn: changed paths, backup/artifact paths, active or completed teammate lanes, accepted evidence, failed or skipped checks, unresolved risks, file-ownership conflicts, and the next materially different slice to try.
 
-Use for TypeScript, JavaScript, React, Vue, Stimulus, frontend state, browser behavior, bundling, CSS interactions, imports, and client-side tests.
+Call `loop_feedback` with only a tiny checkpoint:
 
-Prompt them to trace imports and the runtime path before editing. They should avoid package-manager changes unless User explicitly approved them.
+- `summary`: one short sentence about what changed or was learned.
+- `status`: `continue`, `blocked`, or `ready_for_review`.
+- `notes`: optional blocker or handoff note.
+- `nextActions`: optional short list of the next materially different actions.
 
-### Rails Test Engineer
+Do not put verification matrices, audit dumps, large design notes, or long evidence in `loop_feedback`; evidence belongs in tool history, files, and the final response.
 
-Use for Rails Minitest coverage, fixtures, model/controller/integration/system tests, jobs, mailers, and regression proof in Rails apps.
+### Next-turn prompt enrichment
 
-Prompt them to use fixtures-first Minitest, not RSpec, unless the project already uses another framework and User approves following it.
+At the next turn, enrich the working prompt before doing more work. Treat the previous handoff bundle as the starting order, not as a reason to repeat the same plan.
 
-### Test Expert
+- Carry forward the original goal and current definition of done.
+- Summarize last progress, best evidence, files changed, checks run, and unresolved risks.
+- Include what was tried and did not improve the goal.
+- Include teammate findings with provenance and confidence.
+- Include stale or repeated actions to avoid, unless there is a reason to retry.
+- Convert unresolved gaps into sharper lanes with paths, owners, deadlines, and stop conditions.
+- Choose a materially different verifiable slice if the previous turn plateaued.
+- Keep the loop moving toward the outcome, not toward more planning.
 
-Use for non-Rails tests, cross-stack integration tests, end-to-end tests, CI failures, flaky tests, browser tests, or test strategy.
-
-Prompt them to identify the narrowest checks that prove the behavior. Broad test suites require explicit reason or approval.
-
-### Security Expert
-
-Use for authentication, authorization, permissions, SQL or command injection, XSS, CSRF, SSRF, deserialization, secrets, webhooks, uploads, payments, user-controlled input, and production exposure.
-
-Prompt them to produce prioritized exploit paths and concrete mitigations. Security concerns must be specific, not theatrical.
-
-### Quality Expert
-
-Use for final code review, maintainability, naming, consistency, regression risk, edge cases, and whether the implementation matches the request.
-
-Prompt them to be strict about correctness and evidence. Avoid style-only nitpicks unless they materially affect readability or future bugs.
-
-### Refactor Expert
-
-Use only after behavior is understood or tests are in place. They simplify structure, remove duplication, improve names, or isolate responsibilities without changing behavior.
-
-Prompt them to keep diffs small and identify behavior-sensitive seams.
-
-### Pre-launch Expert
-
-Use for release readiness, migrations, data backfills, rollback paths, observability, feature flags, deploy sequencing, external services, and production verification.
-
-Prompt them to produce a go/no-go checklist with exact commands or manual checks.
-
-### Optional Specialist Additions
-
-Add these only when the project needs them:
-
-- Database Expert: complex queries, indexes, migrations, locks, data volume, query plans.
-- DevOps Expert: Docker, Kamal, CI, deployment configuration, infrastructure, environment variables.
-- Product/UX Expert: ambiguous user flows, acceptance criteria, wording, onboarding, accessibility.
-- Documentation Expert: user-facing docs, README updates, changelog notes, release notes.
-
-## Communication Protocol
-
-The lead must keep communication structured:
-
-1. Send clear initial prompts.
-2. Create team tasks for visible work.
-3. Ask teammates for interim updates if silent too long.
-4. Broadcast important discoveries that affect multiple teammates.
-5. Route dependency information explicitly.
-6. Resolve conflicts centrally.
-7. Capture each final report in ADA before shutdown.
-8. Summarize decisions and evidence to User.
-
-Every teammate report should give the lead enough information to route, accept, reassign, or shut down without another archaeology pass. Teammates should report in this format:
+Use this compact continuation prompt shape when useful:
 
 ```text
-Task: <team task ID / role>
-Summary: <one to three sentences>
-Evidence: <files, commands, logs, tests, and source/provenance>
-ADA updates: <keys updated or data the lead should persist>
-Files inspected: <paths>
-Files changed: <paths or none>
-Risks: <known risks or none>
-Next action: <recommendation>
-Done: <yes/no, and shutdown requested if done>
+Goal: <original goal>
+Current state: <changed artifacts, backup paths, accepted evidence>
+Last turn: <what improved, checks run, what failed/skipped>
+Avoid repeating: <stale plan or low-value checks>
+Next slice: <materially different, verifiable step>
+Swarm plan: <agents, modes, paths, due times, no-overlap map>
+Stop if: <approval needed, side effect needed, evidence impossible, cap reached>
 ```
 
-## Agent Completion and Lead Wakeup
+## Specialist selection
 
-pi-extended-teams owns routine waiting. The extension watches the lead inbox while the lead is idle, updates the team UI, and wakes the lead when teammate reports are ready. The lead should not create raw sleeps, shell waits, or separate LoopCreate polling just to notice team completion.
+Pick specialists by surface area, not by title collection:
 
-Use this rhythm:
+- Rails/backend: `rails-engineer`.
+- React app or React framework behavior: `react-engineer`.
+- JavaScript/TypeScript, Stimulus, DOM, bundling, or Node: `javascript-engineer`.
+- SQL, schema, indexes, migrations, locks, or data integrity: `database-engineer`.
+- Auth, authorization, secrets, user input, uploads, webhooks, payments, SSRF/XSS/CSRF, or privacy: `security-expert`.
+- Test strategy, CI, flakes, Minitest, E2E, system tests, or verification design: `test-expert`.
+- Object boundaries, SOLID, decomposition, or maintainability strategy: `solid-principles-expert`.
+- Large god-code decomposition: `refactor-god-code`.
+- Visual polish, UI motion, or interface feel: `frontend-animator`, `make-interfaces-feel-better`, and/or `frontend-design`.
+- Product uncertainty, interview plans, usability, or journeys: `ux-researcher`.
+- Home Assistant/local HA work: `home-assistant-manager`.
+- Leo-style review before commit/push or explicit review: `leo-the-reviewer`.
 
-1. After spawning, do one immediate status/inbox pass with `list_teammates`, `/team`, or `read_inbox` only if useful.
-2. Process any inbox messages already present before moving on.
-3. If there is independent leader work, do that work while teammates run. Independent work means planning, integration prep, or unrelated coordination that does not duplicate the teammates' assigned investigation/test/review lane.
-4. If there is no independent leader work, stop the turn. Let the extension wake the lead when reports arrive.
-5. When woken by reports, call `read_inbox`, classify each update as progress, blocker, final report, drift, or shutdown request, and act on it.
-6. For blockers, decide whether to answer from existing scope, route to another teammate, ask User, or stop.
-7. For progress, update the team task and ADA only with meaningful state changes.
-8. For final reports, capture summary/evidence/changed paths/risks in ADA, update the task, then approve shutdown unless follow-up is pending.
-9. For drift, send one precise correction that restates scope and stop conditions.
-10. Broadcast ADA-relevant discoveries only when they affect multiple teammates.
-11. Keep the evidence ledger current: claim, source, file/command, verification status, and remaining uncertainty.
+Spawn additional specialists only when they bring distinct evidence. Do not spawn a title just because it exists.
 
-Use `check_teammate` for targeted liveness diagnosis only: suspected stall, stale heartbeat, missing report after a reasonable interval, or explicit User request. Do not poll it as a normal monitoring loop. If a teammate is silent beyond the expected interval, nudge once with a concrete request. If they remain stalled, exceed a stop condition, or appear hung, capture what is known in ADA, shut them down when appropriate, and reassign the task or ask User if a decision is needed.
+## Evidence and integration
 
-## Integration Rules
+Maintain provenance for every important claim:
 
-The lead coordinates integration in dependency order:
+- `lead-verified`: the lead personally read the file, ran the command, or inspected the artifact.
+- `teammate-reported`: a spawned agent reported it and supplied evidence.
+- `user-provided`: User supplied it.
+- `unverified`: useful but not yet proven.
 
-1. Read teammate reports.
-2. Update ADA with accepted findings, rejected findings, changed paths, and remaining uncertainty.
-3. Use teammate reports as the default source of implementation evidence; do not independently inspect diffs, read changed files, or rerun tests solely as a trust check unless User explicitly asks or a blocker requires lead inspection.
-4. Accept only changes that fit the agreed scope based on the assigned teammate's report and evidence.
-5. Delegate necessary follow-up edits, conflict resolution, or verification to the appropriate specialist instead of doing substantive implementation solo.
-6. Assign the narrowest meaningful verification to a teammate first. The lead should only run final acceptance checks when explicitly assigned, explicitly requested by User, or needed to resolve a blocker.
-7. Escalate to broader checks only when risk justifies it or User approved it.
-8. Ask User before optional cleanup, broad refactors, installs, commits, pushes, deploys, production actions, or any decision that changes requested behavior.
+Integrate in this order:
 
-For competing recommendations, prefer the option with the strongest evidence, smallest diff, and clearest rollback path. If the evidence is insufficient or the choice is product-sensitive, ask User rather than guessing.
+1. Read reports.
+2. Decide which findings to accept, reject, or keep open.
+3. Resolve file-ownership or recommendation conflicts centrally.
+4. Assign follow-up work to the narrowest lane or do a small central edit only if it does not duplicate an active teammate.
+5. Verify the changed behavior/artifact through the planned surface.
+6. Shut down finished teammates.
+7. Report concise status to User with remaining risks.
 
-## Evidence Handling
-
-Maintain an evidence ledger in ADA instead of relying on memory. For each important claim, record:
-
-- Claim or result.
-- Source: teammate-reported, lead-verified, tool output, log, or User-provided.
-- Exact file paths, commands, logs, test names, or external docs used as evidence.
-- Verification status: passed, failed, not run, not applicable, or blocked.
-- Remaining risk or uncertainty.
-
-Use precise language in User reports:
-
-- Say "teammate-reported" when the lead did not run the check.
-- Say "lead-verified" only for checks the lead actually performed.
-- Say "not run" or "not independently verified" when evidence is absent.
-- Do not convert partial evidence into certainty.
-
-## Completion Evidence
-
-Before reporting completion, gather teammate-reported evidence appropriate to the task:
-
-- Tests or checks the assigned teammate ran for changed behavior.
-- Lint/typecheck status when relevant and available.
-- Manual command output captured by the assigned teammate when runtime behavior matters.
-- Security review completed for security-sensitive surfaces.
-- Migration and rollback risks reviewed for database or launch work.
-- Files changed are listed by the assigned teammate.
-- Anything the lead did not independently verify is explicitly called out.
-
-Do not claim the lead independently verified success unless the lead actually performed that verification at User request or as an explicitly assigned step.
-
-## Scope and Approval Gates
-
-Treat scope as a contract. The allowed scope is the user's explicit request plus the smallest necessary supporting work to complete it safely. Ask User before:
-
-- Optional cleanup, broad refactors, formatting-only sweeps, or opportunistic improvements.
-- Changing product behavior, user-facing copy, data model semantics, or security posture.
-- Running side-effectful commands, installs, service starts, migrations, deploys, commits, pushes, or production actions.
-- Adding a second writer to the same active checkout.
-- Continuing after an investigation discovers an obvious fix.
-
-When a teammate proposes out-of-scope work, record it as an optional follow-up or durable issue instead of silently doing it.
-
-## Read-Only Investigation Mode
-
-If the user asks to investigate, look into, diagnose, check, or find out why:
-
-- Spawn only read-only research agents.
-- Do not edit, create, install, start services, commit, push, deploy, or run commands with side effects.
-- Report findings and stop.
-- Ask before applying any fix, even if obvious.
-
-## Anti-Patterns
-
-Avoid these:
-
-- Spawning every specialist by default.
-- Creating duplicate ADA artifacts or one artifact per sub-issue.
-- Giving multiple agents the same files without clear ownership.
-- Letting teammates make broad cleanup changes.
-- Marking team tasks complete before capturing the final report and evidence.
-- Accepting teammate output without a clear teammate report and evidence.
-- Running tests as a lead-side trust check when a teammate already reported scoped verification, unless User asked for it or a blocker requires it.
-- Leaving agents alive after completion or ignoring shutdown requests.
-- Spawning agents, then continuing lead-side work without actively reading inbox/status.
-- Asking User to test something the team could verify safely.
-- Reporting a plan as done without evidence.
-- Continuing to code when the user only asked for investigation.
-
-## Example Workflows
-
-### Backend bug in Rails
-
-1. Lead triages only enough error and codepath context to delegate.
-2. Spawn one issue-owner Code Expert if root cause is unclear, otherwise one issue-owner Rails Engineer.
-3. The issue-owner confirms and researches first, then implements in the same session when confirmed and edit-allowed.
-4. Lead collects the issue-owner's fix evidence and reported focused verification result.
-5. Add Rails Test Engineer, Security Expert, or Quality Expert only when there is a distinct testing, security, or review context that should be handled separately.
-
-### Cross-stack feature
-
-1. Lead defines the feature boundary and acceptance criteria.
-2. Spawn Rails Engineer for backend/API work.
-3. Spawn JavaScript Engineer for UI/client behavior.
-4. Spawn Test Expert or Rails Test Engineer for verification.
-5. Lead coordinates contracts between backend and frontend.
-6. Lead assigns integration and verification work, then reports remaining risks.
-
-### Pre-launch review
-
-1. Spawn Pre-launch Expert for release checklist.
-2. Spawn Security Expert if user data, auth, payments, or public endpoints are involved.
-3. Spawn Quality Expert for final diff review.
-4. Lead confirms tests, migrations, rollback, monitoring, and manual verification.
-5. Stop before deploy unless User explicitly authorizes it.
-
-## Durable Project Task Handling
-
-Use the task-manager skill whenever team work creates or consumes durable project tasks:
-
-### Durable Issue State Machine
-
-Track each durable issue in ADA and team coordination with this exact progression:
-
-```text
-backlog -> ready -> in_progress -> in_review -> testing -> committed -> pushed -> pr_created -> pr_updated -> done
-```
-
-State meanings:
-
-- `backlog`: issue exists but has not been selected for current work.
-- `ready`: issue was selected, branch/scope are known, and the next owner can start.
-- `in_progress`: an issue-owner is confirming, researching, or implementing.
-- `in_review`: teammate-reported implementation evidence is being assessed or follow-up is being assigned.
-- `testing`: focused verification is being run or collected from the assigned owner.
-- `committed`: the issue work is committed locally.
-- `pushed`: the issue branch has been pushed to the remote.
-- `pr_created`: a non-draft pull request exists.
-- `pr_updated`: the pull request description has been updated with the concise issue ID, the durable issue body, implementation details, and verification evidence, without local task file paths.
-- `done`: the durable task file and ADA state have been reconciled after PR creation/update and required completion criteria are satisfied.
-
-The lead must update the issue state after each transition. Before moving to another durable issue, the lead must either finish the current issue through `pr_updated` when User authorized publishing, or explicitly record why it stopped earlier and what the next transition is.
-
-### Pull Request Body Requirements
-
-For durable issue PRs, the PR body must:
-
-1. Start with the concise issue ID, for example `Issue ID: rpgmenace issue-009`.
-2. Include the durable issue body content: title, What, Context, and Acceptance Criteria.
-3. Mark acceptance criteria truthfully based on completed and verified/reported work.
-4. Include implementation details after the issue body.
-5. Include teammate-reported checks and any lead-side verification explicitly requested or assigned.
-6. Never include local durable task file paths or generated local metadata.
-
-Before reporting a durable task count, planning issue execution, or spawning agents for a priority-scoped backlog, the lead must run `ls -la ~/Poetry/_projects-tasks/<project>/<priority>/`. If User gives a different count, stop and reconcile before continuing.
-
-1. Project task roots live at `~/Poetry/_projects-tasks/<project>/`.
-2. Urgency folders are `p0`, `p1`, `p2`, and `p3`.
-3. Open tasks are `issue-NNN.md`; completed tasks are renamed to `issue-NNN.done.md`.
-4. `stats.json` must be reconciled after task creation, reprioritization, or completion.
-5. When an investigation produces follow-up work, create issues instead of leaving follow-ups only in chat, reports, or Friday's todo list.
-6. When assigning work to teammates, include the issue ID and path in the teammate prompt as external context only. Never write, or ask an agent to write, the durable issue file's own path or generated metadata such as `Issue: /Users/.../issue-007.done.md` or `Issue ID: rpgmenace issue-007` inside the issue body.
-7. When a teammate finishes task-backed work, review the teammate-reported evidence before marking the issue complete. Do not independently inspect files or rerun tests unless User asked for it or a blocker requires it.
-8. For implementation work, create one branch for one durable task in the active project checkout unless User explicitly authorizes worktrees for that specific work.
-9. If tasks are related, stacked, or dependent, use stacked branches in execution order. Each branch should build on the previous related branch, and the branch names should make the task relationship clear.
-10. Default durable task execution is one issue-owner at a time for a given durable issue. That issue-owner may confirm, research, and implement in sequence when edit-allowed. Parallel teammates should only be used for distinct context lanes such as third-party research, security review, testing strategy, or another independent technical area. Only one edit-allowed teammate may edit files in the active checkout unless User explicitly says otherwise.
-11. When finishing a durable issue or task on a branch the lead authored, and after assigned teammate-reported checks are complete, push the branch to the remote and create a published pull request, not a draft.
-12. The pull request description must start with the concise issue ID, such as `Issue ID: rpgmenace issue-007`, then include the durable issue body, then implementation details and verification evidence. Do not include local durable task file paths in PR descriptions.
-13. After creating the pull request, update or confirm the PR body satisfies the Pull Request Body Requirements, then move the issue state to `pr_updated`.
-14. Only publish branches authored by the lead. If the branch was created by someone else, stop and ask User before pushing or opening a pull request.
-15. Do not mix unrelated durable tasks into the same branch unless User explicitly asks.
-
-## Completion Report
+## Completion report
 
 Final response to User should be concise and include:
 
 - What was done.
-- Files changed.
-- ADA artifact used and the final state captured there.
-- Agents spawned, roles used, and which agents were shut down.
-- Durable task issues created, updated, or completed, identified in the report without copying storage-path metadata into issue bodies.
-- Teammate-reported checks and any lead-side verification explicitly requested or assigned.
-- Any risk or unverified item.
-- Questions or optional improvements that require User approval.
+- Files changed and backup/artifacts created.
+- Agents spawned and their roles.
+- Verification performed and whether it was lead-verified or teammate-reported.
+- Risks, blocked items, or follow-up options that require User approval.
+
+## Anti-patterns
+
+Avoid:
+
+- Spawning agents without independent lanes, deadlines, or report shapes.
+- Spawning a writer before file ownership is clear.
+- Letting two agents or the lead and a writer edit the same file concurrently.
+- Repeating the same loop plan after feedback showed a plateau.
+- Treating delegation itself as progress evidence.
+- Busy-waiting for agents instead of doing independent lead work or ending the turn with feedback.
+- Reporting completion without an artifact, diff, check, or explicit reason verification is not applicable.
+- Continuing to code when User only asked for investigation.
