@@ -1,6 +1,6 @@
 ---
 name: team-leader
-description: Plans and leads complex coding work with pi-extended-teams and pi-loop. Use whenever User asks to plan, build, fix, investigate, review, test, launch, coordinate agents, run swarms, or improve a goal across loop iterations. This skill makes the lead calculate the smallest useful team, assign non-overlapping lanes, set thinking levels and deadlines, synthesize reports, enrich the next loop prompt, and record loop feedback instead of drifting into ad hoc solo work.
+description: Plans and leads complex coding work with pi-extended-teams and pi-loop. Use whenever User asks to plan, build, fix, investigate, review, test, launch, coordinate agents, run swarms, or improve a goal across loop iterations. This skill makes the lead calculate the smallest useful team, assign non-overlapping lanes, set thinking levels and deadlines, wait for all spawned swarm agents to report without poking or peeking, synthesize reports, enrich the next loop prompt, and record loop feedback instead of drifting into ad hoc solo work.
 ---
 
 # Team Leader
@@ -22,7 +22,7 @@ Use pi-extended-teams deliberately: read-only agents are the default multiplier;
 9. For User-scoped durable tasks, use `~/Poetry/_projects-tasks/<project>/`, verify priority folders with `ls -la` before counts or planning, and keep one branch per durable task unless User authorizes otherwise.
 10. Do not commit, push, deploy, install packages, start services, run migrations, or make production changes unless User explicitly authorizes that exact side effect.
 11. Before any commit, push, or PR, apply the active review gate (`leo-the-reviewer` when required) and wait for its verdict. Publish durable-task work only after assigned checks are complete, only from a lead-authored branch, as a non-draft PR whose body starts with the concise issue ID and omits local task paths.
-12. Do not busy-wait, sleep, or poll teammates. pi-extended-teams wakes the lead when reports arrive. Use `check_teammate` only for targeted liveness diagnosis after several minutes or a real health concern.
+12. Do not busy-wait, sleep, poll, poke, or peek at teammates after spawning them. pi-extended-teams wakes the lead when reports arrive; once a swarm is launched, treat it as a join barrier. Do unrelated lead work if available, then wait for every expected teammate report (final, explicitly deadline-bounded partial, or blocker) before synthesis or completion. Use `check_teammate` only for targeted liveness diagnosis after several minutes or a real health concern.
 13. Capture final teammate reports, evidence, changed paths, risks, and shutdown requests promptly. Stop teammates when the work is complete or no longer needed.
 14. Do not claim completion until the requested artifact/behavior exists and the appropriate checks or evidence are recorded. In pi-loop mode, call `loop_feedback` before any completion claim.
 
@@ -69,7 +69,7 @@ Calculate the team from independent lanes, time remaining, and risk:
 4. **Prefer read-only first.** For uncertain bugs, report-sourced issues, security concerns, or testing gaps, confirm with a read-only lane before assigning writing.
 5. **Use one writer by default.** If implementation is needed, either the lead edits centrally or one write agent owns isolated files. Do not let writer and lead work on the same files concurrently.
 6. **Set deadlines.** In a 10-minute pi-loop turn, read agents should usually report in 4-6 minutes; isolated writers in 6-8 minutes. Reserve the last 1-2 minutes for synthesis, verification decisions, and `loop_feedback`.
-7. **Cut scope near the cap.** If time is low, request final or partial reports, record unresolved items as `nextActions`, and move unfinished lanes to the next loop turn.
+7. **Cut scope near the cap.** If time is low, avoid spawning lanes that cannot self-report before the cap. For already-spawned lanes, wait for their pre-set final/partial reports instead of poking them; record unresolved items as `nextActions` only after a blocker, cancellation, or real health failure.
 
 Use this lightweight planning table mentally or in notes when the task is complex:
 
@@ -105,10 +105,12 @@ Use current pi-extended-teams tools and behavior:
 
 - Use `spawn_swarm_agents` for multiple independent read-only lanes in one batch.
 - Use `spawn_agent` for one focused lane or a rare isolated writer.
-- Use `read_inbox` when reports arrive or after spawning for an immediate inbox pass.
+- Use `read_inbox` when the harness indicates reports have arrived; do not call it immediately after spawning or repeatedly just to peek at progress.
 - Use `check_teammate` only when a specific agent appears stalled or unhealthy after several minutes.
 - Use `stop_teammate` only when User explicitly asks to cancel/stop an agent or when an agent is no longer needed.
 - Tell edit agents to `claim_file` before writing, avoid unclaimed paths, `release_file` when done, and call `report_and_exit` with changed paths and verification.
+
+After `spawn_swarm_agents`, the batch has an implicit join. The lead may continue only with independent, non-overlapping lead work while agents run. Do not poke, peek, nudge, poll, or finalize based on the first report. Read reports as they arrive, record evidence, and keep waiting until every agent in the batch has reported final findings, an explicitly deadline-bounded partial, or a blocker/cancellation before central synthesis, completion claims, commit/push decisions, or the next delegation decision.
 
 Every teammate prompt must include:
 
@@ -155,11 +157,11 @@ When pi-loop mode is active, the lead must run each turn as a verifiable slice, 
 ### During the turn
 
 - Do independent lead work only when it does not duplicate a delegated lane.
-- Read and synthesize teammate reports as they arrive.
+- Read teammate reports as they arrive, but do not finalize swarm synthesis until every expected agent has reported final findings, an explicitly deadline-bounded partial, or a blocker/cancellation.
 - Correct scope drift with one precise message.
 - Integrate evidence into the plan: accepted facts, rejected facts, open risks, and changed paths.
 - Run or assign verification appropriate to the artifact. Executable changes need real passed command evidence when feasible; docs/skill changes need file existence, content, and diff inspection.
-- If agents are still running near the cap, request final or partial reports and carry the rest forward.
+- If agents are still running near the cap, wait for their pre-set deadline reports instead of poking or peeking. Carry a lane forward only after it reports a blocker/partial result, is cancelled by User, or shows a real health failure.
 
 ### End of turn
 
@@ -229,7 +231,7 @@ Maintain provenance for every important claim:
 
 Integrate in this order:
 
-1. Read reports.
+1. Wait for all expected swarm reports, then read reports.
 2. Decide which findings to accept, reject, or keep open.
 3. Resolve file-ownership or recommendation conflicts centrally.
 4. Assign follow-up work to the narrowest lane or do a small central edit only if it does not duplicate an active teammate.
@@ -256,6 +258,6 @@ Avoid:
 - Letting two agents or the lead and a writer edit the same file concurrently.
 - Repeating the same loop plan after feedback showed a plateau.
 - Treating delegation itself as progress evidence.
-- Busy-waiting for agents instead of doing independent lead work or ending the turn with feedback.
+- Busy-waiting, poking, peeking, nudging, or finalizing before all spawned swarm agents have reported; do independent lead work, then wait for the swarm join.
 - Reporting completion without an artifact, diff, check, or explicit reason verification is not applicable.
 - Continuing to code when User only asked for investigation.
