@@ -6,11 +6,12 @@ Repo: <https://github.com/dantetekanem/leo-personal-pi> · Skill index: [SKILLS.
 
 ## What this is
 
-This repo holds my hand-picked skills under `skills/`, each a plain folder (with a `SKILL.md` and/or `skill.yaml`). Pi loads skills from `~/.pi/agent/skills/`, where each managed skill is a **symlink** back into this repo. That means:
+This repo holds my hand-picked, Git-tracked skills under `skills/`, each a plain folder (with a `SKILL.md` and/or `skill.yaml`). Pi loads these managed skills from `~/.pi/agent/skills/`, where each one is a **symlink** back into this repo. That means:
 
-- I edit, version, and back up my skills here in git.
+- I edit, version, and back up tracked skills here in git.
 - Changes show up in Pi instantly through the symlinks — no copy step.
-- I can still keep local-only, unmanaged skills as real folders in `~/.pi/agent/skills/`; those aren't tracked here.
+- Only tracked folders listed in [SKILLS.md](./SKILLS.md) are part of this repository's source-of-truth guarantee.
+- I can still keep local-only, unmanaged skills as real folders in `~/.pi/agent/skills/`; those aren't tracked or indexed here.
 
 Some skills (e.g. `frontend-design`, `skill-creator`) come from [anthropics/skills](https://github.com/anthropics/skills) and are intentionally **not** vendored here — they're listed in [SKILLS.md](./SKILLS.md) with links to their upstream source.
 

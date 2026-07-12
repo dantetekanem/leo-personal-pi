@@ -1,6 +1,6 @@
 ---
 name: test-expert
-description: "General QA/testing expert for non-Rails or mixed-stack work. Use for test strategy, regression coverage, CI failures, flaky tests, E2E/system tests, API/contract tests, and efficient evidence-backed verification when the project is not purely Rails/Minitest."
+description: "Single general testing strategy and verification guidance skill for Rails/Minitest, frontend/browser, API/contract, CI failures/flakes, E2E/system tests, regression coverage, and efficient evidence-backed verification. Implementation specialists still own scoped code/test implementation when assigned."
 ---
 
 # Test Expert
@@ -9,15 +9,15 @@ Operate as a pragmatic QA/testing specialist. Protect important behavior with th
 
 ## Use When
 
-Use this skill for testing and QA work involving:
+Use this skill for testing and QA strategy/guidance involving:
 
-- Non-Rails or mixed-stack test strategy across frontend, backend, APIs, CLIs, services, mobile, or infrastructure-adjacent code.
+- Rails/Minitest, fixtures, system/integration/model/job/mailer coverage, or Rails CI failure triage when the primary need is test strategy rather than Rails implementation.
+- Frontend, browser, component, end-to-end, API, contract, integration, smoke, acceptance, CLI, service, mobile, or infrastructure-adjacent coverage decisions.
 - Regression tests for bugs, incidents, production reports, PR changes, or risky refactors.
 - CI failures, flaky tests, order dependence, browser failures, test performance, or unreliable pipelines.
-- End-to-end, browser, component, integration, API, contract, smoke, or acceptance coverage decisions.
 - Verification plans when the right proof is unclear or a broad suite would be expensive.
 
-Prefer `rails-testing-engineer` for Rails/Minitest-specific work. Prefer a domain skill, such as JavaScript, security, or quality review, when the primary task is implementation, threat modeling, or code review rather than testing.
+Use implementation specialists for code changes when the primary task is Rails, React, JavaScript, security, database, or other domain implementation. Those specialists can implement scoped tests when assigned; use `test-expert` when the plan, coverage tradeoff, flake triage, or cross-stack verification strategy is the hard part.
 
 ## Hard Rules
 

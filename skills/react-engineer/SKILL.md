@@ -30,7 +30,8 @@ Prefer another skill when:
 - The task is visual direction, brand/aesthetic exploration, typography, or layout redesign; use `frontend-design`.
 - The task is motion design, micro-interactions, animation timing, or complex transitions; use `frontend-animator`.
 - The task is Rails/Hotwire/Stimulus server-rendered UI rather than React; use `rails-engineer` or `javascript-engineer` as appropriate.
-- The task is broad security review, launch readiness, or generic test strategy without a React implementation target; use the specialized skill.
+- The task is broad security review or launch readiness without a React implementation target; use the appropriate active specialist or ask before broadening scope.
+- The task is broad test strategy, cross-stack verification planning, CI flake triage, or browser/E2E strategy without a React implementation target; coordinate with `test-expert`.
 - React Native platform APIs dominate the work. Use this skill only for shared React patterns unless no mobile-specific skill exists.
 
 ## Non-Negotiable User Constraints
@@ -293,6 +294,8 @@ Bad React refactors:
 - Large formatting/design-system churn mixed into a behavior fix.
 
 ## Testing and Verification
+
+React engineers can implement scoped React tests when assigned. Coordinate with `test-expert` when the hard part is broad test strategy, cross-stack verification planning, CI flake triage, or browser/E2E strategy rather than React implementation details.
 
 Match verification to the change:
 

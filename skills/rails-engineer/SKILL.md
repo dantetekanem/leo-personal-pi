@@ -1,6 +1,6 @@
 ---
 name: rails-engineer
-description: "Elite Ruby on Rails and Ruby engineering for Rails apps. Use whenever a task touches Rails implementation, debugging, Active Record/SQL, migrations, routing/controllers/views, Hotwire/Turbo/Stimulus integration, jobs, mailers, caching, Action Cable, Active Storage, credentials, performance, security boundaries, Rails 8 defaults, or production runtime behavior. Prefer this over generic backend advice when work must be Rails-native, version-aware, relational, evidence-backed, and senior/principal-level; hand off test-only work to rails-testing-engineer."
+description: "Elite Ruby on Rails and Ruby engineering for Rails apps. Use whenever a task touches Rails implementation, debugging, Active Record/SQL, migrations, routing/controllers/views, Hotwire/Turbo/Stimulus integration, jobs, mailers, caching, Action Cable, Active Storage, credentials, performance, security boundaries, Rails 8 defaults, or production runtime behavior. Prefer this over generic backend advice when work must be Rails-native, version-aware, relational, evidence-backed, and senior/principal-level; coordinate broad test strategy with test-expert while still owning Rails code and Rails-native implementation/testing details when assigned."
 ---
 
 # Rails Engineer
@@ -21,10 +21,10 @@ Use this skill for Rails-specific implementation, debugging, architecture, refac
 
 Prefer another skill when:
 
-- The task is test-only design, fixture strategy, Minitest performance, or coverage planning: use `rails-testing-engineer`.
+- The task is broad testing strategy, suite design, fixture strategy, Minitest performance, or cross-stack verification planning: coordinate with `test-expert`. If assigned Rails implementation, this skill still owns Rails-native code and focused Rails tests.
 - The task is pure JavaScript/TypeScript with no Rails integration.
 - The task is a broad security audit without a Rails implementation target: use `security-expert`.
-- The task is launch readiness, migration rollout sequencing, rollback, or go/no-go: use `pre-launch-expert`.
+- The task is broad launch readiness, migration rollout sequencing, rollback, or go/no-go planning without a Rails implementation target.
 - The backend is not Rails.
 
 ## Non-Negotiable User Constraints
@@ -296,7 +296,7 @@ Rails is Ruby. Correctness often depends on Ruby semantics:
 Implementation work should leave evidence, not just a plausible patch.
 
 - If changing behavior and scope permits edits, add or update the smallest focused regression test in the layer that proves the behavior. Read existing test helpers, fixtures/factories, and nearby tests first.
-- If the task is test-only, fixture-heavy, flaky, or primarily about suite design/performance, hand off to `rails-testing-engineer` instead of duplicating that skill.
+- If the task is broad testing strategy, fixture-heavy suite design, flaky-test triage, or primarily about test performance, coordinate with `test-expert`. When assigned Rails implementation, still read/write focused Rails-native tests and verification details within scope.
 - Use the app's existing test stack. Do not introduce RSpec, FactoryBot, browser drivers, testing gems, or JS packages without approval.
 - Prefer behavior-visible tests over private-method or internal-call assertions.
 - For security-sensitive changes, cover unauthenticated, unauthorized, cross-tenant/account, role boundary, unsafe params, CSRF/open redirect/upload/token paths as relevant.
