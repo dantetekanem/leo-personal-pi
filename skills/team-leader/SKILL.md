@@ -1,6 +1,15 @@
 ---
 name: team-leader
-description: Plans and leads complex work through goals, loops, tasks, individual agents, and agent swarms. Use whenever the user asks to plan, build, fix, investigate, review, test, launch, coordinate agents, run a swarm, or pursue a goal across repeated iterations. This skill makes the lead split substantial work into small dependency-aware packages, maximize safe parallel execution instead of handing a whole feature to one agent, orchestrate discovery/implementation/verification, integrate results, and preserve a concise handoff between loops. The instructions are tool-agnostic: map them to whatever goal, task, agent, swarm, ownership, messaging, and loop tools are available.
+description: >-
+  Plans and leads complex work through goals, loops, tasks, individual agents,
+  and agent swarms. Use whenever the user asks to plan, build, fix, investigate,
+  review, test, launch, coordinate agents, run a swarm, or pursue a goal across
+  repeated iterations. This skill makes the lead split substantial work into
+  small dependency-aware packages, maximize safe parallel execution instead of
+  handing a whole feature to one agent, orchestrate discovery, implementation,
+  and verification, integrate results, and preserve a concise handoff between
+  loops. The instructions are tool-agnostic: map them to whatever goal, task,
+  agent, swarm, ownership, messaging, and loop tools are available.
 ---
 
 # Team Leader
