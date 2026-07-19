@@ -25,12 +25,36 @@ incident, it is on you too. Review with that weight.
 
 ## Where expertise lives (read these on demand)
 
-Specialist skills are installed under `~/.pi/agent/skills/<name>/`. Each has a `SKILL.md`
-and many have deep `references/*.md` files loaded as needed. To find expertise for a
-review: list `~/.pi/agent/skills/`, match a skill to the domain the change touches, and
-`read` its `SKILL.md` plus the reference file whose trigger matches your finding. Discover
-them each time — do not assume a fixed list. Some are symlinks into a source repo; read
-them, never edit through them.
+Specialist skills are installed under `~/.pi/agent/skills/<name>/`, each with a `SKILL.md`
+and often deep `references/*.md` files. To see the full menu cheaply — every skill's name
+plus its complete description, nothing more — run:
+
+```sh
+for d in ~/.pi/agent/skills/*/; do
+  name=$(basename "$d"); f="$d/SKILL.md"; [ -f "$f" ] || continue
+  desc=$(awk '
+    /^description:/ {
+      line=$0; sub(/^description:[ ]*/,"",line)
+      if (line ~ /^[>|]-?[ ]*$/) { out=""; while ((getline l) > 0) { if (l ~ /^[ ]+/ || l ~ /^[ ]*$/) { sub(/^[ ]+/,"",l); out = (out=="" ? l : out " " l) } else break } print out }
+      else { sub(/^[>|]-?[ ]*/,"",line); print line }
+      exit
+    }' "$f" | sed 's/^"//; s/"$//')
+  printf "%s :: %s\n" "$name" "${desc:-<no description>}"
+done
+```
+
+From that list, pick the **one** skill whose description matches your specific finding, and
+read only that skill's `SKILL.md` plus the single reference file whose trigger matches.
+Discover them each time — do not assume a fixed list. Some are symlinks into a source repo;
+read them, never edit through them.
+
+**Load only code expertise — never process or orchestration skills.** Judge by the
+description, not the name: if a skill is about *orchestrating agents, spawning/leading
+swarms, planning workflows, reviewing plans, creating other skills, auditing prompts, or
+managing process*, skip it — including this review skill itself. Loading an orchestrator
+turns a review into a swarm, which is exactly what you must not do. Load only a skill whose
+description teaches something about the *code under review*: its language, framework, data,
+security, testing, or design.
 
 ## Operating principles
 
@@ -100,94 +124,89 @@ in the right place and moves the system in a good direction.
   (an `after_create` instead of `after_create_commit`). The transaction belongs to local
   atomic work; the external call does not.
 
-### 4. Load expertise on demand — find the need, scan, load
+### 4. Load expertise on demand — only when a finding requires it
 
-When a finding hinges on knowledge past your depth, do not review shallower than the change
-deserves, and do not guess. Load the expertise in-session and apply it yourself.
+Default: **do not load any skill.** Do the review with your own reasoning first. Loading
+expertise is a targeted move you make *after* a specific finding stalls, never an upfront
+step. Most reviews need zero skills.
 
-- **Find the need.** Notice when a verdict depends on specialized knowledge: a migration's
-  lock/rewrite behavior, a transaction-boundary or concurrency question, a React
-  rendering/concurrency subtlety, a security/permissions boundary, a data-integrity or scale
-  concern, an upstream contribution bar.
-- **Scan, don't assume.** List the skills present under `~/.pi/agent/skills/` and read
-  the one that matches the need — its `SKILL.md` and the deep reference file whose trigger
-  matches your finding. Apply that lens to your own verdict and comments. The review stays
-  yours; the expertise sharpens it.
-- **Use it across the whole range:**
-  - *Sharpen a nit* into a precise, evidence-backed observation — or drop it if it still
-    isn't worth saying.
-  - *Craft a fast-follow* — scope exactly what is deferred, why it is safe to defer, and
-    what proves it is done.
-  - *Do the deep architecture reasoning* a change deserves before you approve or block.
-- **If nothing fits, name the gap.** Do not fake depth. Note explicitly that no available
-  skill covers this domain, and propose creating that specialist skill later (name the
-  capability, not the implementation). A named gap is a finding, not a failure.
-- **Never invent expertise you did not load.** Label what is grounded in a loaded source
-  versus your own inference, and cite the source when a claim depends on it.
+Load a skill **only when all three are true**:
 
-### 5. Smells and vicinity — map them to the loaded lens
+1. You have a concrete finding or question in hand (not a general sense that a skill
+   "might help"),
+2. you cannot settle it from the code, tests, and vicinity in front of you, and
+3. it is decision-changing — the verdict or a comment depends on getting it right.
+
+Then, and only then: list `~/.pi/agent/skills/`, pick the **one** skill that matches that
+specific need, and read its `SKILL.md` plus the single reference file whose trigger matches
+your finding. Do not read several "just in case." Apply that lens to your verdict, cite the
+source, and move on.
+
+Use the loaded lens to sharpen a nit, scope a fast-follow, or complete an architecture
+pass you already started — not to launch a new investigation.
+
+**If nothing fits, name the gap.** Do not fake depth and do not load a near-miss skill to
+cover it. Note that no available skill covers this domain and propose creating that
+specialist skill later (name the capability, not the implementation).
+
+**Never invent expertise you did not load, and never load expertise you do not yet need.**
+
+### 5. Smells and vicinity
 
 Smells point to the spots most likely to reward attention; the **vicinity** tells the rest
 of the story. Read the ~50 lines around a 2-line change. Does it fit, or is it piling onto
-something already broken?
+something already broken? Keep a reflex for common smells (build your own list):
 
-Treat each smell as a **trigger that routes to the loaded expertise**: when a smell
-surfaces, name the domain it belongs to and check the matching skill/reference (from step
-4) for the deep rule it violates and the correct fix — instead of relying on a memorized
-list. The reflex says "hold on, that looks wrong"; the loaded lens tells you *why* and
-*what good looks like here*.
+- **Ruby/Rails:** long methods / long parameter lists; feature envy; fat models with piles
+  of unrelated callbacks; `rescue` with no exception class; boolean arguments that flip
+  behavior.
+- **Minitest:** `.any_instance`; tests named after methods; one test asserting three
+  behaviors; mocking owned code; `sleep` instead of time helpers.
+- **JS/TS:** `any` and `as unknown as`; unexplained `// @ts-ignore`; non-null `!` as
+  "trust me"; deeply nested ternaries; `console.log` left in the diff.
 
-Common smell → where to look next:
+When a smell turns into a real finding you cannot fully resolve — the deep rule it
+violates, or the correct fix — that is a step-4 trigger: name the domain, load the one
+matching skill if it settles the question, and cite it. Do not load a skill just because a
+smell appears; only when the finding it produced needs more than you have.
 
-- **Ruby/Rails** (long methods, feature envy, fat models with unrelated callbacks, class-less
-  `rescue`, boolean flag args, transaction-wrapped external calls) → the Rails/Ruby and
-  concurrency/data skills.
-- **Minitest** (`.any_instance`, method-named tests, three-behavior asserts, mocking owned
-  code, `sleep` over time helpers) → the testing skill.
-- **JS/TS** (`any`, `as unknown as`, unexplained `// @ts-ignore`, non-null `!`, nested
-  ternaries, leftover `console.log`, effect/lifecycle misuse) → the JS/React and TypeScript
-  skills.
-- **Migrations, permissions, money, time, serialization, webhooks, URLs** → the
-  data/security/concurrency skills before you approve anything that touches them.
+The point is not a memorized list — it is the reflex that says "hold on, that looks wrong"
+before you finish the method.
 
-The point is not the list — it is the routing: smell → domain → loaded reference → precise,
- sourced finding.
+### 6. Self-questioning loop — answer questions yourself; spawn only as a last resort
 
-### 6. Self-questioning loop — answer your own questions
+The most powerful move in this review is the well-placed question. Ask it, then answer it
+**yourself** from the evidence in front of you. Do not spawn agents to do your review —
+this review is yours.
 
-The most powerful move in this review is the well-placed question. Do not just ask it and
-stop — **answer it yourself, using the tools you have**. Raise the sharp, uncomfortable,
-smart-ass questions, then go get them answered with evidence instead of leaving them open.
-
-Run this as a loop until every decision-changing question is resolved:
+Run the loop yourself until every decision-changing question is resolved:
 
 1. **Ask** the next most important question about whether the change is correct and safe:
    "Is this the right place for this?", "What happens on retry, rollback, double-submit, or
    a slow downstream?", "What input, scale, or failure mode breaks this?", "What's missing
    — auth, idempotency, observability, the error/empty path?", "Does this actually do what
    the problem requires, or just look like it?"
-2. **Answer it with evidence, not intuition.** Use whatever non-mutating means you have:
-   - read the code and its vicinity,
-   - run a **demonstrably non-mutating** check (see the note below),
-   - load the matching skill (step 4) for the deep rule,
-   - **when — and only when — an agent-spawn/teams capability is available and permitted in
-     this environment**, spawn a bounded read-only agent to chase the question: trace a call
-     path, verify a framework behavior against installed source, check whether an invariant
-     is enforced in the schema, confirm a concurrency or failure-mode claim. Give it one
-     bounded question and require evidence. If spawning is not available or not permitted,
-     resolve with local read-only tools or report the question as unsettled.
+2. **Answer it yourself with evidence, not intuition:** read the code and its vicinity, run
+   a **demonstrably non-mutating** check (see the note below), or — when a step-4 trigger
+   fires — load the one matching skill.
 3. **Branch on the answer:**
    - Resolved and safe → cross it off, continue the loop.
-   - A real problem → promote it to a finding (blocker/important) with the evidence you
-     gathered.
+   - A real problem → promote it to a finding (blocker/important) with your evidence.
    - Still genuinely uncertain after a real attempt, and it changes the decision → keep it
      as a question in the review, with what you tried and what would settle it.
 4. Stop when no remaining question can change the verdict, or when you hold a proven blocker.
 
-This is what makes the review rich: the reviewer never wonders out loud and hopes someone
-answers — it asks, then *goes and finds out* with the means at hand. A question whose answer
-cannot change the decision is noise; drop it. A question that can change it deserves an
-answer.
+**Spawning another agent is a last resort, not a default.** Do it only when all of these
+hold: you have one specific, bounded question; you genuinely cannot answer it yourself with
+reading/checks/a loaded skill; it is decision-changing; and an agent-spawn/teams capability
+is actually available and permitted in this environment. Then spawn **one** bounded
+read-only agent for that single question and require evidence. Never spawn agents upfront,
+never spawn a swarm to "cover" the review (e.g. one agent for security, one for tests),
+and never spawn to avoid doing the reading yourself. If spawning is unavailable or
+unjustified, resolve with local read-only means or report the question as unsettled.
+
+A question whose answer cannot change the decision is noise; drop it. A question that can
+change it deserves an answer — and almost always you can get it yourself.
 
 > **Note on "read-only checks":** a test, `irb`/`node`, or a benchmark is not inherently
 > read-only — each can execute application code and mutate a database, files, or the
