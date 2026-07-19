@@ -1,6 +1,19 @@
 # Rails 8 Features Reference
 
-Comprehensive guide to Rails 8 features, patterns, and migration strategies.
+> Return to [SKILL.md](../SKILL.md) for core principles, boundaries, and reference-selection rules.
+
+Load this reference only after confirming the installed Rails version and local configuration, when Rails 8 feature specifics are central to the task.
+
+## Contents
+
+- [The Solid Trifecta: Database-Backed Infrastructure](#the-solid-trifecta-database-backed-infrastructure)
+- [Authentication Generator](#authentication-generator)
+- [Parameter Handling: params.expect()](#parameter-handling-paramsexpect)
+- [Propshaft: New Asset Pipeline](#propshaft-new-asset-pipeline)
+- [Kamal 2 + Thruster Deployment](#kamal-2--thruster-deployment)
+- [Security Improvements](#security-improvements)
+- [Performance Optimizations](#performance-optimizations)
+- [Migration Guide from Rails 7](#migration-guide-from-rails-7)
 
 ## The Solid Trifecta: Database-Backed Infrastructure
 
@@ -408,13 +421,28 @@ def order_params
   ])
 end
 
-# Optional parameters with defaults
+# Note: `expect` requires every listed root key, and when you pass multiple roots it
+# returns an ARRAY of the permitted values (destructure it), not a single Parameters
+# object. For genuinely optional roots use `permit` and default them yourself.
 def search_params
-  params.expect(
-    q: true,
-    page: true,
+  permitted = params.permit(
+    :q,
+    :page,
     filters: [:category, :price_range, :availability]
-  ).with_defaults(page: 1, filters: {})
+  )
+  permitted[:page] ||= 1
+  permitted[:filters] ||= {}
+  permitted
+end
+
+# When all roots are required, `expect` is the strict choice — destructure the result:
+def order_params
+  q, page, filters = params.expect(
+    :q,
+    :page,
+    filters: [:category, :price_range, :availability]
+  )
+  # q, page, filters are the individual permitted values
 end
 
 # Conditional expectations
@@ -426,14 +454,15 @@ def user_params
 end
 ```
 
-**Type Coercion**:
+**Type Strictness**:
 ```ruby
-# params.expect automatically handles type conversion
-params.expect(
-  page: Integer,      # Converts to integer
-  published: Boolean, # Converts to true/false
-  tags: Array        # Ensures array format
-)
+# params.expect is STRICTER than permit about types; it does not coerce strings.
+# A scalar filter passes only permitted scalar values (String, Symbol, numbers,
+# true/false, nil); passing `page: Integer` is NOT a type filter — filters name
+# keys and nested shapes, not Ruby classes. Cast explicitly when you need a type:
+page = params.expect(:page).to_i          # "10" -> 10
+published = ActiveModel::Type::Boolean.new.cast(params.expect(:published))
+params.expect(tags: [])                   # an array of permitted scalars
 ```
 
 ## Propshaft: New Asset Pipeline

@@ -1,33 +1,47 @@
 # Database Performance Patterns for Rails
 
-Comprehensive guide to database optimization patterns that expert Rails developers must understand.
+> Return to [SKILL.md](../SKILL.md) for core principles, boundaries, and reference-selection rules.
+
+Load this reference for Active Record data modeling, query shape, indexes, N+1s, counting, batching, replicas, migration safety, query plans, or database monitoring.
+
+## Contents
+
+- [Index Usage Patterns](#index-usage-patterns)
+- [Composite Index Column Order](#composite-index-column-order)
+- [N+1 Query Patterns](#n1-query-patterns)
+- [Query Optimization Patterns](#query-optimization-patterns)
+- [Advanced Performance Techniques](#advanced-performance-techniques)
+- [PostgreSQL Specific Optimizations](#postgresql-specific-optimizations)
+- [Migration Best Practices](#migration-best-practices)
+- [Performance Monitoring](#performance-monitoring)
+- [Active Record Modeling and Query Semantics](#active-record-modeling-and-query-semantics)
 
 ## Index Usage Patterns
 
 ### Function Calls on Indexed Columns
 
-**Problem**: Function calls in WHERE clauses prevent index usage, even when indexes exist.
+**Guidance**: Applying a function to an indexed column can prevent a plain index from being used for that expression. The result depends on the database, operator class, and selectivity, so verify with `EXPLAIN`.
 
 ```ruby
-# ❌ BREAKS index on 'email' column
+# ⚠️ May not use a plain index on 'email'
 User.where("LOWER(email) = ?", "john@example.com")
 
-# ❌ BREAKS index on 'created_at' column  
+# ⚠️ May not use a plain index on 'created_at'
 Post.where("DATE(created_at) = ?", Date.current)
 
-# ❌ BREAKS index on 'title' column
+# ⚠️ May not use a plain index on 'title'
 Post.where("LENGTH(title) > ?", 50)
 ```
 
-**Solution**: Create functional indexes for computed values:
+**Solution**: Create functional indexes for computed values, or rewrite the predicate to filter the raw column. Verify the plan; a matching expression index can be used:
 
 ```ruby
 # Migration
 add_index :users, "LOWER(email)", name: 'index_users_on_lower_email'
-add_index :posts, "DATE(created_at)", name: 'index_posts_on_date_created_at' 
+add_index :posts, "DATE(created_at)", name: 'index_posts_on_date_created_at'
 add_index :posts, "LENGTH(title)", name: 'index_posts_on_title_length'
 
-# Query (now uses index)
+# Query (can use a matching expression index)
 User.where("LOWER(email) = ?", email.downcase)
 Post.where("DATE(created_at) = ?", Date.current)
 Post.where("LENGTH(title) > ?", 50)
@@ -45,14 +59,14 @@ WHERE status = 'active';
 
 ### OR Conditions and Composite Indexes
 
-**Problem**: OR conditions prevent composite index usage.
+**Guidance**: OR conditions can make a composite index less effective. A planner may use separate index scans (such as a BitmapOr) or choose a sequential scan, so verify the plan with `EXPLAIN`.
 
 ```ruby
-# ❌ Won't use composite index on (user_id, status)
+# ⚠️ May be less efficient with a composite index on (user_id, status)
 Order.where(user_id: user.id)
      .where("status = 'pending' OR status = 'processing'")
 
-# ❌ Same problem with Rails syntax
+# ⚠️ Equivalent Rails syntax; verify the generated plan
 Order.where(user_id: user.id)
      .where(status: 'pending')
      .or(Order.where(user_id: user.id, status: 'processing'))
@@ -74,10 +88,10 @@ Order.where(user_id: user.id).pending_or_processing
 
 ### NOT Conditions Break Index Usage
 
-**Problem**: NOT conditions require scanning most of the table.
+**Guidance**: NOT and inequality predicates can be less selective and may lead the planner to scan much of the table. Index use depends on selectivity, null semantics, and the database, so verify with `EXPLAIN`.
 
 ```ruby
-# ❌ Scans ~95% of table even with status index
+# ⚠️ May scan much of the table when most rows are not canceled
 Order.where.not(status: 'canceled')
 User.where.not(email: nil)
 Post.where("status != 'draft'")
@@ -85,12 +99,14 @@ Post.where("status != 'draft'")
 
 **Solutions**:
 
-1. **Use positive conditions**:
+1. **Use selective positive conditions when the domain allows**:
 ```ruby
-# ✅ Uses index efficiently
+# ✅ Can use an index when the values are selective
 Order.where(status: ['pending', 'processing', 'shipped', 'delivered'])
-User.where.not(email: nil)  # Use presence validation instead
 Post.where(status: ['published', 'featured'])
+
+# For frequent non-NULL queries, consider a matching partial index
+User.where.not(email: nil)
 ```
 
 2. **Partial indexes (PostgreSQL)**:
@@ -193,9 +209,14 @@ users.each { |user| puts user.posts.size }  # uses loaded association
 
 # ✅ Even better: counter cache
 class User < ApplicationRecord
-  has_many :posts, counter_cache: true
+  has_many :posts
 end
 
+class Post < ApplicationRecord
+  belongs_to :user, counter_cache: true
+end
+
+# The users table has a posts_count column.
 users.each { |user| puts user.posts_count }  # no query needed
 ```
 
@@ -249,17 +270,22 @@ users = User.select(:id, :name, :email)  # excludes bio, preferences JSON
 ### Efficient Counting
 
 ```ruby
-# ❌ Loads all records then counts
-User.where(active: true).count  # Can be slow with large datasets
+# ❌ Loads all records then counts in Ruby
+User.where(active: true).to_a.count
 
 # ✅ Database-level count
 User.where(active: true).count  # Uses SQL COUNT()
 
 # ✅ Counter caches for associations
 class User < ApplicationRecord
-  has_many :posts, counter_cache: true
+  has_many :posts
 end
 
+class Post < ApplicationRecord
+  belongs_to :user, counter_cache: true
+end
+
+# The users table has a posts_count column.
 user.posts_count  # No query needed
 
 # ✅ Estimated counts for large tables (PostgreSQL)
@@ -271,10 +297,15 @@ ActiveRecord::Base.connection.execute(
 ### Batching Large Operations
 
 ```ruby
-# ❌ Memory explosion with large datasets
+# ❌ Instantiates and updates every record one by one
+User.where(created_at: 1.year.ago..1.day.ago).each do |user|
+  user.update!(status: 'inactive')
+end
+
+# ✅ One SQL UPDATE, with no record instantiation
 User.where(created_at: 1.year.ago..1.day.ago).update_all(status: 'inactive')
 
-# ✅ Process in batches
+# ✅ Batch SQL updates when the set is very large
 User.where(created_at: 1.year.ago..1.day.ago).in_batches(of: 1000) do |batch|
   batch.update_all(status: 'inactive')
 end
@@ -357,9 +388,10 @@ puts result.to_a
 -- Index only active users
 CREATE INDEX idx_active_users_email ON users (email) WHERE active = true;
 
--- Index only recent orders  
-CREATE INDEX idx_recent_orders_status ON orders (status) 
-WHERE created_at > NOW() - INTERVAL '30 days';
+-- Partial-index predicates must be immutable; rolling time windows cannot be used here.
+-- Index orders with a stable status predicate instead.
+CREATE INDEX idx_pending_orders_status ON orders (status)
+WHERE status = 'pending';
 
 -- Index only published posts
 CREATE INDEX idx_published_posts_category ON posts (category_id) 
@@ -448,5 +480,70 @@ SELECT schemaname, tablename, indexname, idx_scan
 FROM pg_stat_user_indexes 
 WHERE idx_scan = 0;
 ```
+
+## Active Record Modeling and Query Semantics
+
+### Associations and Domain Shape
+
+- Model ownership and cardinality honestly. Do not use `belongs_to :user` as a lazy substitute for account/tenant ownership.
+- Association names should express the domain, not table plumbing.
+- Prefer association traversal, scoped associations, and `merge` over manual foreign-key juggling.
+- Join models are required when the relationship has attributes, lifecycle, permissions, ordering, auditability, or behavior.
+- `dependent:` is product/data-retention policy, not housekeeping. Understand deletion, nullification, archival, audit, and legal implications.
+- JSON/serialized columns fit opaque metadata/config blobs. They are a smell for queryable, relational, constrained, permissioned, audited, or lifecycle-bearing data.
+- Polymorphism, STI, and delegated types are sharp knives. Choose by query shape, shared behavior, lifecycle, authorization, and migration path.
+- If enum state accumulates timestamps, actors, retry counts, error messages, audit trails, or history, consider a first-class event/process table.
+
+### Validations, Constraints, and Invariants
+
+- Model validations improve UX. Database constraints preserve truth.
+- Use unique indexes for uniqueness; scoped uniqueness needs matching composite indexes.
+- Use foreign keys and check constraints unless the app has a documented reason not to.
+- Avoid validations that load large associations or perform expensive queries on hot paths.
+- Race-sensitive invariants require database enforcement, transactions, locks, upserts, or atomic writes, not just validation.
+
+### Relations and Querying
+
+- Ask constantly: is this still an `ActiveRecord::Relation`, or did Ruby materialize it into an array/scalar?
+- Return relations from scopes and chainable query methods unless intentionally returning a scalar, array, or performing work.
+- Keep database work in SQL until loading is deliberate. Avoid `to_a`, `map`, `select`, `group_by`, `sort_by`, `uniq`, and Ruby filtering over unbounded relations when SQL can do it.
+- `find_by`, `take`, and first-row behavior are unordered unless explicit order exists. Add deterministic order when it matters.
+- `where.not(column: value)` does not include NULL rows unless handled explicitly.
+- `joins` against `has_many` can duplicate parent rows. Use `distinct`, grouping, or subqueries only when the SQL semantics are intended.
+- Choose `preload`, `includes`, `eager_load`, `references`, and `strict_loading` based on desired SQL shape and N+1 risk, not folklore.
+- `select` can instantiate partial models and cause missing attributes. `pluck`, `pick`, `ids`, calculations, `exists?`, `in_batches`, and `find_each` execute/load differently; use them intentionally.
+- `find_each`/batching imposes batching order and is not a drop-in replacement for arbitrary ordered iteration.
+- Avoid `default_scope` unless the app already depends on it and hidden behavior is understood.
+- Never interpolate SQL. Use bound parameters, hash conditions, Arel where appropriate, and `sanitize_sql_like` for LIKE patterns.
+- Bulk APIs (`insert_all`, `upsert_all`, `update_all`, `delete_all`, `touch_all`) bypass validations/callbacks; state that explicitly when using them.
+
+### Indexes, Plans, Transactions, and Locks
+
+- Composite index design starts from real `WHERE`, `JOIN`, and `ORDER BY` shape. Adapter rules differ; verify with EXPLAIN when the claim matters.
+- Avoid speculative or duplicate indexes. Account for write cost, storage, lock risk, and planner selectivity.
+- Plan-reading basics: estimated vs actual rows, loops, sort/hash/seq-scan nodes, index condition vs filter, join strategy, and eager-loading side effects.
+- Transactions are per database connection, not per model and not distributed across databases.
+- Do not rescue `ActiveRecord::StatementInvalid` inside a PostgreSQL transaction and continue; restart the transaction.
+- Nested transactions are not independent unless `requires_new: true`; adapters usually emulate with savepoints.
+- Use `after_commit` for external side effects, cache invalidation, broadcasts, and jobs that need committed data.
+- Prefer unique indexes, upserts, atomic updates, and constraints over check-then-act code.
+- Use optimistic locking (`lock_version`) for human edit conflicts and surface/reload on `StaleObjectError`. Use pessimistic locks/`with_lock` for short critical sections. Acquire multiple locks in one globally deterministic order to avoid deadlocks, retry `ActiveRecord::Deadlocked` only at an idempotent boundary with a strict limit, and never perform network I/O while holding locks.
+- A transaction is not serial execution. Two `READ COMMITTED` transactions can both pass a check and both commit (write skew/phantom). Enforce the invariant with a constraint, an atomic conditional write, or a supported `SERIALIZABLE` level with bounded retries.
+- `find_or_create_by` is not atomic; back the key with a unique constraint and use `create_or_find_by` or `upsert_all(unique_by:)` deliberately.
+- Treat `:reading`/replica connections as stale by design. Keep correctness-dependent post-write reads on the writer (`connected_to(role: :writing)` or verified stickiness) until the replication window is safe.
+- Represent money as integer minor units or `BigDecimal`/decimal, never `Float`; define one rounding mode and stage. Treat counter caches as denormalized data maintained by every create/delete path.
+- For deep failure modes (isolation, deadlocks, money, counter caches, deletion semantics, time zones, batching, counts, N+1 in serializers/jobs, update-API bypass), read `rails-concurrency-and-safety.md`.
+
+### Migrations and Data Changes
+
+- The schema dump is the practical source of rebuild truth; migrations describe evolution.
+- Do not edit committed/applied migrations. Add a new migration.
+- Prefer reversible migrations. Use `up`/`down` or `reversible` for irreversible operations.
+- Adding `NOT NULL`, uniqueness, FKs, checks, or indexes requires existing-data proof plus lock/backfill/deploy-order thinking.
+- Large tables need choreography: backward-compatible nullable schema, deploy code, batch backfill, validate constraints/indexes, then tighten invariants.
+- PostgreSQL concurrent indexes require disabling DDL transactions and a rollback/drop plan.
+- Treat every large-table DDL as adapter/version-specific rollout choreography: prove lock/rewrite behavior, use concurrent or not-valid-then-validate where supported, backfill idempotently, tighten later, ship rollback/monitoring first. Do not assume blanket rules (e.g. "adding a column with a default always rewrites" is false on modern PostgreSQL); verify against the installed adapter/version.
+- Data migrations are operational risk. Prefer separate, idempotent, batched, observable work using stable SQL or anonymous model classes. Avoid current app models/callbacks in migrations that may run months later.
+- Stop if table size, lock behavior, timeout policy, deploy order, rollback path, or monitoring is unknown.
 
 This database optimization guide provides the foundation for writing Rails applications that perform well at scale. Always measure before optimizing, and use EXPLAIN ANALYZE to verify that your indexes are being used effectively.
