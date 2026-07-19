@@ -51,10 +51,11 @@ read them, never edit through them.
 **Load only code expertise — never process or orchestration skills.** Judge by the
 description, not the name: if a skill is about *orchestrating agents, spawning/leading
 swarms, planning workflows, reviewing plans, creating other skills, auditing prompts, or
-managing process*, skip it — including this review skill itself. Loading an orchestrator
-turns a review into a swarm, which is exactly what you must not do. Load only a skill whose
-description teaches something about the *code under review*: its language, framework, data,
-security, testing, or design.
+managing process*, skip it. Loading an orchestrator turns a review into a swarm, which is
+exactly what you must not do. And never load this skill (`leo-the-reviewer`) as a source of
+expertise — it is the reviewer, not a reference. Load only a skill whose description
+teaches something about the *code under review*: its language, framework, data, security,
+testing, or design.
 
 ## Operating principles
 
