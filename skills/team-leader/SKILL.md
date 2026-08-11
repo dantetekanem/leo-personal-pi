@@ -69,11 +69,11 @@ Read only the reference whose trigger matches the task:
 2. When the user asks only to investigate, diagnose, check, or find out why, keep all work read-only. Report findings and stop before fixing.
 3. Route work adaptively. Use the least ceremony that still protects the outcome, and reforecast when evidence changes the estimate.
 4. For orchestrated work, define the goal and its specs in `goal.md` and pass the work-package decomposition gate before any work begins. Planning is a lead responsibility; a broad agent mission is not a plan.
-5. Treat `goal.md` as the binding contract: never game, weaken, reinterpret, or quietly edit its acceptance criteria to make them pass. Loop as many iterations as needed until every criterion is genuinely met.
+5. Treat `goal.md` as the binding project contract: never game, weaken, reinterpret, or quietly edit its acceptance criteria to make them pass. Loop across milestones as needed until every criterion is genuinely met; the milestone circuit breakers below limit any one milestone without weakening the goal or its safety gates.
 6. Maximize useful concurrency across ready independent packages in orchestrated work. Enumerate independent write packages and run them concurrently when exact ownership is file/resource-isolated and the saved critical-path time exceeds coordination and integration cost. Serialize for overlap, dependency order, shared mutable resources, weak benefit, or another concrete risk; never parallelize merely to inflate agent count.
 7. Give every editing agent an explicit mode, scope, and exact ownership before acting. Concurrent editing is appropriate only for non-overlapping packages; reserve cross-package integration to the lead and required independent verification to a fresh non-author.
 8. Never let writers overlap. Establish file or resource ownership before edits. The lead must not edit an active writer’s owned surface.
-9. Give all work a focused check. Add a fresh read-only non-author pass when security, data, authorization, irreversibility, material integration, high uncertainty, user instruction, or insufficient evidence makes independence valuable.
+9. Give all work a focused check. Add a fresh read-only non-author pass when security, data, authorization, irreversibility, material integration, high uncertainty, user instruction, or insufficient evidence makes independence valuable; route comprehensive reviews and scoped confirmations through the milestone circuit breakers.
 10. Do not busy-wait, sleep, poll, poke, or repeatedly check quiet agents. Continue unrelated work, then wait for reports. Diagnose liveness only after a meaningful delay or a real health signal.
 11. Do not claim work complete until its acceptance evidence exists. Partial progress, elapsed time, agent activity, or a nearly exhausted budget is not completion.
 12. Do not commit, push, deploy, install, start services, migrate data, or perform other side effects unless the user authorized that exact class of action.
@@ -120,7 +120,7 @@ Rules that protect the goal:
 
 - Never game the goal. Do not weaken, reinterpret, narrow, or quietly edit acceptance criteria to make them pass; do not confuse activity, effort, elapsed time, or partial progress with meeting them.
 - `goal.md` changes only through an explicit user scope change, which the lead records in the file before continuing.
-- Loop as long as needed. Keep iterating until every acceptance criterion is genuinely met; an unfinished goal is a reason to continue, never a reason to lower the bar.
+- Loop across milestones as long as needed. Before implementing each milestone, freeze its acceptance criteria, threat model, exercised slice, and allowed scope. Close it when those frozen criteria and applicable safety gates pass; do not keep it open merely because another project-goal criterion is unfinished. Keep iterating across milestones until every project-goal acceptance criterion is genuinely met; an unfinished goal is a reason to continue, never a reason to lower the bar.
 - Stop only for genuine completion, an actual blocker, required user input, or exhausted authorized scope — and report which acceptance criteria remain unmet when stopping early.
 - At the end, verify every acceptance criterion in `goal.md` against concrete evidence, one by one. This final verification is mandatory and can never be skipped.
 - Do not replace an unfinished goal unless the user explicitly changes it.
@@ -134,8 +134,8 @@ Represent substantial or orchestrated work as observable outcome packages, not v
 - Keep one lead orchestration task active unless a swarm explicitly owns several ready tasks in parallel.
 - Record dependencies so blocked work cannot start early.
 - Mark a task complete only after its full acceptance criteria and checks pass.
-- If requirements change, rewrite or split tasks so the visible plan remains truthful.
-- Add discovered required work to the task graph before moving on; do not hide it in prose.
+- If requirements change, do not silently rewrite frozen milestone criteria: capture an explicit user scope change or schedule the change for a later milestone, then rewrite or split tasks so the visible plan remains truthful.
+- Add discovered work that blocks the current milestone or project goal to the task graph before moving on; record findings outside frozen milestone scope as nonblocking follow-ups unless a milestone circuit-breaker exception makes them immediate blockers.
 - At completion, reconcile stale owners, statuses, blockers, and evidence.
 
 ### Loops
@@ -161,7 +161,19 @@ At the end of a loop, preserve a compact checkpoint:
 - the next materially different slice;
 - actions not to repeat without new evidence.
 
-Continue the loop while the goal is unfinished and clear low-risk work remains. The goal’s acceptance criteria — not budget comfort or iteration count — decide when looping ends: loop as many times as needed until all of them genuinely pass. Stop only for completion, an actual blocker, required user input, or exhausted authorized scope.
+Continue the loop across milestones while the goal is unfinished and clear low-risk work remains. The goal's acceptance criteria—not budget comfort or iteration count—decide when the project loop ends: loop as many times as needed until all of them genuinely pass. Within a milestone, however, apply the circuit breakers below rather than turning one slice into an unbounded audit loop.
+
+### Milestone circuit breakers
+
+Freeze a milestone's acceptance criteria, threat model, exercised slice, and allowed scope before implementation. This is a closure boundary, not a change to the project goal: preserve the goal's integrity and all safety, data-loss, privacy, authorization, and irreversibility gates.
+
+- Treat findings outside the frozen milestone scope as nonblocking follow-ups. Bring one into the current milestone only when it exposes immediate data loss, a privacy or security breach, irreversibility, or failure in the currently exercised slice.
+- Run at most two comprehensive reviews per milestone. A third requires reforecasting hardening against the visible outcome and an explicit user choice. A scoped post-fix approval closes that finding; it does not reopen the whole subsystem. Use separate confirmation only for missing or weak evidence, disputed claims, or irreducible high-risk uncertainty, and never reconfirm an already confirmed finding.
+- Five blocking repairs or two nested repair generations (a repair required by a prior repair) trigger a mandatory reforecast: split or defer remaining hardening and unblock the next vertical capability. Do not use the threshold to waive a safety gate; if no safe next capability exists, report the trade-off.
+- For every active milestone, demonstrate a thin end-to-end user outcome within four active hours or two implementation tasks, whichever comes first. If it has not appeared, make the next task the thinnest missing vertical step and pause foundation hardening.
+- Every 90 active minutes or five agent reports, check whether a user-visible stage advanced. After two consecutive checks with no advancement, stop starting new audit or confirmation lanes and provide an immediate user-facing hardening-versus-outcome trade-off report.
+
+These breakers govern work within a milestone; they do not authorize closing an unmet project goal or bypassing required independent verification. Carry nonblocking follow-ups into the task graph or a later milestone, and advance the next vertical slice instead of reopening a closed milestone by default.
 
 ## Intake and acceptance contract
 
@@ -249,7 +261,7 @@ For the orchestrated route, work by prerequisites rather than rigid global phase
 2. **Implement useful packages.** Launch ready packages with exact non-overlapping file/resource ownership concurrently when the net benefit is positive. Serialize for overlap, dependency order, shared mutable resources, weak benefit, or another explicit collision/integration risk. Each author implements one package and runs its focused checks.
 3. **Unlock continuously.** Accept or reject each handoff as it arrives, reforecast, and update the task graph. Start newly unlocked work when its prerequisites are accepted and it neither overlaps nor depends on unfinished work. Do not hold it behind an unrelated slow package.
 4. **Integrate centrally.** The lead resolves contract mismatches and cross-package tradeoffs. If integration becomes large, promote or decompose it rather than hiding a second implementation project under “integration.”
-5. **Verify independently when warranted.** After the final integration edit, use a fresh read-only non-author for the conditions defined in the intake contract. Give the verifier the acceptance contract, changed surfaces, author evidence, and integrated checks. Any later material edit invalidates that verdict and requires a fresh pass when the same conditions still apply.
+5. **Verify independently when warranted.** After the final integration edit, use a fresh read-only non-author for the conditions defined in the intake contract. Give the verifier the acceptance contract, changed surfaces, author evidence, and integrated checks. Any later material edit to the reviewed scope invalidates that verdict and requires a fresh pass when the same conditions still apply; it does not reopen unrelated closed findings or the whole subsystem.
 6. **Accept as lead.** The lead runs at least one direct acceptance check, resolves remaining risks, and alone decides whether work is complete.
 
 Use a full join barrier only when integration genuinely requires all results. Never synthesize from the first convenient report when relevant prerequisites remain unfinished.
