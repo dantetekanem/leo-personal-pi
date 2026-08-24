@@ -1,6 +1,6 @@
 # Skills
 
-My personal Pi skills. Entries link to Leo-owned skill folders in this repo; externally sourced or adapted skills are intentionally omitted.
+My managed Pi skills. Entries link to skill folders in this repo; vendored skills retain their upstream attribution and license.
 
 | # | Skill | Link | Description |
 |---|-------|------|-------------|
@@ -14,7 +14,10 @@ My personal Pi skills. Entries link to Leo-owned skill folders in this repo; ext
 | 8 | react-engineer | [skills/react-engineer](./skills/react-engineer) | React components, hooks, state, effects, routing/data loading, performance, accessibility, forms, TypeScript, styling, and tests. |
 | 9 | refactor-god-code | [skills/refactor-god-code](./skills/refactor-god-code) | Whole-project decomposition of huge files, god objects, tangled responsibilities, and agent-created monoliths. |
 | 10 | security-expert | [skills/security-expert](./skills/security-expert) | Security review and threat modeling for auth, authorization, secrets, inputs, uploads, APIs, webhooks, sessions, SSRF, XSS, and privacy. |
-| 11 | solid-principles-expert | [skills/solid-principles-expert](./skills/solid-principles-expert) | Pragmatic SOLID and object-design guidance for responsibilities, boundaries, contracts, cohesion, coupling, and extension seams. |
-| 12 | team-leader | [skills/team-leader](./skills/team-leader) | Tool-agnostic orchestration through goals, tasks, loops, bounded agents, dependency-aware swarms, lead integration, and independent verification. |
-| 13 | test-expert | [skills/test-expert](./skills/test-expert) | Single general testing strategy/guidance skill for Rails/Minitest, frontend/browser, API/contract, CI failures/flakes, E2E/system tests, and verification planning. |
-| 14 | ux-researcher | [skills/ux-researcher](./skills/ux-researcher) | UX research planning, usability studies, interviews, ethical evidence synthesis, journeys, JTBD, and build-ready recommendations. |
+| 11 | social-posts-from-content | [skills/social-posts-from-content](./skills/social-posts-from-content) | Turn articles, posts, notes, links, research, and other reference material into concise, truthful, human social copy. |
+| 12 | solid-principles-expert | [skills/solid-principles-expert](./skills/solid-principles-expert) | Pragmatic SOLID and object-design guidance for responsibilities, boundaries, contracts, cohesion, coupling, and extension seams. |
+| 13 | team-leader | [skills/team-leader](./skills/team-leader) | Tool-agnostic orchestration through goals, tasks, loops, bounded agents, dependency-aware swarms, lead integration, and independent verification. |
+| 14 | test-expert | [skills/test-expert](./skills/test-expert) | Single general testing strategy/guidance skill for Rails/Minitest, frontend/browser, API/contract, CI failures/flakes, E2E/system tests, and verification planning. |
+| 15 | ux-researcher | [skills/ux-researcher](./skills/ux-researcher) | UX research planning, usability studies, interviews, ethical evidence synthesis, journeys, JTBD, and build-ready recommendations. |
+| 16 | humanizer | [skills/humanizer](./skills/humanizer) | Vendored from [blader/humanizer](https://github.com/blader/humanizer) to rewrite AI-sounding prose without changing its claims or the writer's voice. |
+| 17 | theme-switcher | [skills/theme-switcher](./skills/theme-switcher) | Switch Leo's coordinated Ghostty, Herdr, and Pi appearance between the approved Dracula and Lumon presets. |

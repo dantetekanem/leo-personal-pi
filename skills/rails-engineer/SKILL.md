@@ -40,6 +40,8 @@ Prefer another skill when:
 - For JavaScript package operations, match the package manager the repository already uses (its lockfile and `package.json`); prefer `pnpm` for the user's own apps.
 - Prefer `agentic_search` for locating Rails constructs and related files. Do not use the Pi grep tool. Use `rg` or `fd` in the shell only as fallback.
 - Do not introduce gems, packages, services, queues, caches, background infrastructure, deployment tooling, or architecture layers without explicit need and approval.
+- Never create a migration file by hand. Always start migrations with the application's Rails generator (normally `bin/rails generate migration ...`), then edit the generated file as needed. If the generator cannot run, stop and report the blocker rather than manually creating the migration.
+- A migration is not complete while it is merely generated or edited. Run it against the local development database promptly after creating it. If it fails because the migration needs correction, fix the migration and rerun it until it succeeds; then verify the local schema is current with no pending migrations. Stop and report any blocker that cannot be fixed safely within scope. This local migration workflow is part of migration implementation, not an optional follow-up; production and other shared environments remain separately gated.
 - Local repository evidence wins over this skill. If app conventions conflict with this guidance, state the conflict and choose the smallest evidence-backed path.
 
 ## Evidence-First Workflow

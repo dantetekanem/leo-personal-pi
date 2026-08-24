@@ -13,7 +13,7 @@ This repo holds my hand-picked, Git-tracked skills under `skills/`, each a plain
 - Only tracked folders listed in [SKILLS.md](./SKILLS.md) are part of this repository's source-of-truth guarantee.
 - I can still keep local-only, unmanaged skills as real folders in `~/.pi/agent/skills/`; those aren't tracked or indexed here.
 
-Some skills (e.g. `frontend-design`, `skill-creator`) come from [anthropics/skills](https://github.com/anthropics/skills) and are intentionally **not** vendored here — they're listed in [SKILLS.md](./SKILLS.md) with links to their upstream source.
+Some skills (e.g. `frontend-design`, `skill-creator`) come from [anthropics/skills](https://github.com/anthropics/skills) and are intentionally **not** vendored or indexed here.
 
 ## Layout
 
@@ -35,7 +35,7 @@ leo-personal-pi/
   ln -s ~/Poetry/leo-personal-pi/skills/<skill> ~/.pi/agent/skills/<skill>
   ```
   then commit & push.
-- **Remove a managed skill:** delete the symlink in `~/.pi/agent/skills/` and the folder under `skills/`, then commit & push.
+- **Remove a managed skill:** delete its folder under `skills/` and its `SKILLS.md` entry, then remove the symlink in `~/.pi/agent/skills/`, commit, and push.
 
 ## Configs
 
@@ -43,12 +43,11 @@ Terminal/multiplexer dotfiles backed up under `configs/` (kept as **plain copies
 
 | File in repo | Installs to | What it does |
 |--------------|-------------|--------------|
+| `configs/pi/AGENTS.md` | `~/.pi/agent/AGENTS.md` | Plain backup copy of the global Pi instruction router and hazard map. |
 | `configs/tmux.conf` | `~/.tmux.conf` | Mouse on, extended/CSI-u key reporting, image-protocol passthrough. Ghostty titles (`#S · #W`), auto-rename windows to the running command, `destroy-unattached` so sessions die with their last tab. |
 | `configs/ghostty/config.ghostty` | `~/Library/Application Support/com.mitchellh.ghostty/config.ghostty` | Entry point — just `config-file` points at `local.ghostty`. |
-| `configs/ghostty/local.ghostty` | `~/.config/ghostty/local.ghostty` | The real Ghostty config: launches a new tmux session on start (inherits cwd), keybinds `cmd+s` → tmux save-buffer and `cmd+b` → tmux zoom toggle, Tokyo Night palette, `background-opacity = 0.85`, `background-blur = 16`, 10px padding, `confirm-close-surface = false`, shell integration (no-title). |
-| `configs/ghostty/new-tmux-session` | `~/.config/ghostty/new-tmux-session` | Helper script Ghostty runs on launch — starts a tmux session rooted at the active pane's directory (falls back to `$PWD`/`$HOME`). |
-
-> Note: `config.ghostty` and `local.ghostty` reference each other and the helper script by absolute path under `/Users/leonardopereira/…`; adjust if restoring on a different machine/user.
+| `configs/ghostty/local.ghostty` | `~/.config/ghostty/local.ghostty` | The real Ghostty config backup: inherits the working directory, keybinds `cmd+s` → tmux save-buffer, `cmd+b` → tmux zoom toggle, and `option+backspace` → previous-word deletion, with the managed terminal palette, `background-opacity = 0.85`, `background-blur = 16`, 10px padding, `confirm-close-surface = false`, and shell integration (no-title). |
+| `configs/ghostty/new-tmux-session` | `~/.config/ghostty/new-tmux-session` | Retained helper for manually starting a tmux session rooted at the active pane's directory (falls back to `$PWD`/`$HOME`); the current Ghostty config does not invoke it automatically. |
 
 ## Source of truth
 
