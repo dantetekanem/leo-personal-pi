@@ -44,6 +44,7 @@ Terminal/multiplexer dotfiles backed up under `configs/` (kept as **plain copies
 | File in repo | Installs to | What it does |
 |--------------|-------------|--------------|
 | `configs/pi/AGENTS.md` | `~/.pi/agent/AGENTS.md` | Plain backup copy of the global Pi instruction router and hazard map. |
+| `configs/pi/prompts/companion.md` | `~/.pi/agent/prompts/companion.md` | Plain backup copy of the Companion scheduling prompt. |
 | `configs/tmux.conf` | `~/.tmux.conf` | Mouse on, extended/CSI-u key reporting, image-protocol passthrough. Ghostty titles (`#S · #W`), auto-rename windows to the running command, `destroy-unattached` so sessions die with their last tab. |
 | `configs/ghostty/config.ghostty` | `~/Library/Application Support/com.mitchellh.ghostty/config.ghostty` | Entry point — just `config-file` points at `local.ghostty`. |
 | `configs/ghostty/local.ghostty` | `~/.config/ghostty/local.ghostty` | The real Ghostty config backup: inherits the working directory, keybinds `cmd+s` → tmux save-buffer, `cmd+b` → tmux zoom toggle, and `option+backspace` → previous-word deletion, with the managed terminal palette, `background-opacity = 0.85`, `background-blur = 16`, 10px padding, `confirm-close-surface = false`, and shell integration (no-title). |
