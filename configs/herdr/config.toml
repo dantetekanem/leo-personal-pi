@@ -1,0 +1,36 @@
+onboarding = false
+
+[experimental]
+kitty_graphics = true
+
+[keys]
+prefix = "ctrl+b"
+focus_pane_left = ["prefix+h", "prefix+left"]
+focus_pane_down = ["prefix+j", "prefix+down"]
+focus_pane_up = ["prefix+k", "prefix+up"]
+focus_pane_right = ["prefix+l", "prefix+right"]
+swap_pane_left = ["prefix+shift+h", "prefix+shift+left"]
+swap_pane_down = ["prefix+shift+j", "prefix+shift+down"]
+swap_pane_up = ["prefix+shift+k", "prefix+shift+up"]
+swap_pane_right = ["prefix+shift+l", "prefix+shift+right"]
+
+[ui]
+pane_scrollbars = false
+status_indicators = "symbols"
+show_agent_labels_on_pane_borders = true
+tab_bar_position = "bottom"
+tab_bar_right_separator = " │ "
+# Needs the pi-system-monitor package: pi install https://github.com/dantetekanem/pi-system-monitor
+tab_bar_right = [
+  { type = "command", command = "sh -c 'exec node --experimental-strip-types \"$HOME/.pi/agent/git/github.com/dantetekanem/pi-system-monitor/herdr-status.ts\"'", interval_seconds = 30, timeout_seconds = 3 },
+]
+
+[ui.sound]
+enabled = true
+
+[ui.toast]
+delivery = "herdr"
+
+[theme]
+name = "dracula"
+auto_switch = false

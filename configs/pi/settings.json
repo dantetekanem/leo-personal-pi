@@ -1,0 +1,32 @@
+{
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-5-5",
+  "defaultThinkingLevel": "max",
+  "theme": "dracula",
+  "hideThinkingBlock": true,
+  "quietStartup": true,
+  "collapseChangelog": true,
+  "doubleEscapeAction": "none",
+  "enableSkillCommands": true,
+  "followUpMode": "all",
+  "steeringMode": "all",
+  "showCacheMissNotices": true,
+  "packages": [
+    "https://github.com/davebcn87/pi-autoresearch",
+    "npm:pi-agentic-search",
+    "git:github.com/dantetekanem/pi-render-images-tmux",
+    "git:github.com/dantetekanem/pi-thinking-messaging",
+    "git:github.com/dantetekanem/pi-retitle",
+    "https://github.com/dantetekanem/pi-system-monitor",
+    "https://github.com/dantetekanem/pi-ask-user",
+    "https://github.com/dantetekanem/pi-intro",
+    "https://github.com/dantetekanem/pi-coder",
+    "git:github.com/dantetekanem/pi-extended-teams",
+    "git:github.com/dantetekanem/pi-emote",
+    "git:github.com/dantetekanem/pi-voice-shortcut",
+    "https://github.com/dantetekanem/pi-companion",
+    "git:github.com/dantetekanem/pi-solid-tasks",
+    "git:github.com/dantetekanem/pi-auto-review",
+    "git:github.com/dantetekanem/pi-orb"
+  ]
+}

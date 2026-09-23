@@ -48,6 +48,10 @@ Terminal/multiplexer dotfiles backed up under `configs/` (kept as **plain copies
 | `configs/tmux.conf` | `~/.tmux.conf` | Mouse on, extended/CSI-u key reporting, image-protocol passthrough. Ghostty titles (`#S · #W`), auto-rename windows to the running command, `destroy-unattached` so sessions die with their last tab. |
 | `configs/ghostty/config.ghostty` | `~/Library/Application Support/com.mitchellh.ghostty/config.ghostty` | Entry point — just `config-file` points at `local.ghostty`. |
 | `configs/ghostty/local.ghostty` | `~/.config/ghostty/local.ghostty` | The real Ghostty config backup: inherits the working directory, keybinds `cmd+s` → tmux save-buffer, `cmd+b` → tmux zoom toggle, and `option+backspace` → previous-word deletion, with the managed terminal palette, `background-opacity = 0.85`, `background-blur = 16`, 10px padding, `confirm-close-surface = false`, and shell integration (no-title). |
+| `configs/herdr/config.toml` | `~/.config/herdr/config.toml` | Herdr: `ctrl+b` prefix, pane focus and swap on both `h/j/k/l` and arrows, symbol status indicators, agent labels on pane borders, bottom tab bar with the pi-system-monitor status command, sound on, toasts inside Herdr, Dracula theme. Same as the live file, except the status command path starts at `$HOME`. |
+| `configs/pi/settings.json` | `~/.pi/agent/settings.json` | Shareable subset of the live Pi settings: default model and thinking level, Dracula theme, quiet startup, hidden thinking blocks, and every public package. Local-only, private, and disabled packages are left out. Merge it into an existing file; do not overwrite. |
+| `configs/pi/keybindings.json` | `~/.pi/agent/keybindings.json` | `shift+enter` goes to the previous match in alt-screen search. |
+| `configs/pi/themes/dracula.json` | `~/.pi/agent/themes/dracula.json` | The Dracula Pi theme that `settings.json` selects. |
 | `configs/ghostty/new-tmux-session` | `~/.config/ghostty/new-tmux-session` | Retained helper for manually starting a tmux session rooted at the active pane's directory (falls back to `$PWD`/`$HOME`); the current Ghostty config does not invoke it automatically. |
 
 ## Source of truth
