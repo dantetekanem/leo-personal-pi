@@ -93,7 +93,7 @@ History pass:
 - Look for performance pain, review churn, production failures, query kills, retries, flaky/slow tests, large migrations, or repeated refactors.
 - Separate active current pain from stale historical noise.
 
-If using spawned agents, give each one a narrow output file and a strict "do not post externally" instruction. Use `openai/gpt-5.5` for `team_spawn` unless the user explicitly says otherwise, and verify with `team_status` immediately.
+If using spawned agents, give each one a narrow question and a strict "do not post externally" instruction. Spawn them with `spawn_agent` or `spawn_swarm_agents` and a read tier such as `model_slot: "read-collect"`. Each agent returns its findings in its final report; wait for the reports instead of polling.
 
 ### 4. Build raw candidate inventory
 
