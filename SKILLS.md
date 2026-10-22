@@ -21,3 +21,4 @@ My managed Pi skills. Entries link to skill folders in this repo; vendored skill
 | 15 | ux-researcher | [skills/ux-researcher](./skills/ux-researcher) | UX research planning, usability studies, interviews, ethical evidence synthesis, journeys, JTBD, and build-ready recommendations. |
 | 16 | humanizer | [skills/humanizer](./skills/humanizer) | Vendored from [blader/humanizer](https://github.com/blader/humanizer) to rewrite AI-sounding prose without changing its claims or the writer's voice. |
 | 17 | theme-switcher | [skills/theme-switcher](./skills/theme-switcher) | Switch Leo's coordinated Ghostty, Herdr, and Pi appearance between the approved Dracula and Lumon presets. |
+| 18 | 2advanced-design | [skills/2advanced-design](./skills/2advanced-design) | Design, animate, and critique interfaces in the taste of 2Advanced Studios' V3-V5 sites, rebuilt for modern accessibility, responsive layout, and performance. |
