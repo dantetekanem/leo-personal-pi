@@ -1,9 +1,5 @@
 # Rails Debugging and Verification Playbooks
 
-> Return to [SKILL.md](../SKILL.md) for core principles, boundaries, and reference-selection rules.
-
-Load this reference when diagnosing a concrete Rails failure or choosing focused verification for an implementation change.
-
 ## Request/Controller Bug
 
 1. Confirm route, verb, format, params, controller/action, middleware/session assumptions.

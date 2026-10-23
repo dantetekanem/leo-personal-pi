@@ -1,9 +1,5 @@
 # Database Performance Patterns for Rails
 
-> Return to [SKILL.md](../SKILL.md) for core principles, boundaries, and reference-selection rules.
-
-Load this reference for Active Record data modeling, query shape, indexes, N+1s, counting, batching, replicas, migration safety, query plans, or database monitoring.
-
 ## Contents
 
 - [Index Usage Patterns](#index-usage-patterns)
@@ -532,7 +528,6 @@ WHERE idx_scan = 0;
 - `find_or_create_by` is not atomic; back the key with a unique constraint and use `create_or_find_by` or `upsert_all(unique_by:)` deliberately.
 - Treat `:reading`/replica connections as stale by design. Keep correctness-dependent post-write reads on the writer (`connected_to(role: :writing)` or verified stickiness) until the replication window is safe.
 - Represent money as integer minor units or `BigDecimal`/decimal, never `Float`; define one rounding mode and stage. Treat counter caches as denormalized data maintained by every create/delete path.
-- For deep failure modes (isolation, deadlocks, money, counter caches, deletion semantics, time zones, batching, counts, N+1 in serializers/jobs, update-API bypass), read `rails-concurrency-and-safety.md`.
 
 ### Migrations and Data Changes
 

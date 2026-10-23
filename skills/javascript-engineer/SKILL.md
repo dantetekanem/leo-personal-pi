@@ -1,6 +1,6 @@
 ---
 name: javascript-engineer
-description: "Expert JavaScript and TypeScript engineering for browser and Node code, with first-class React depth. Use whenever work involves UI behavior, components, hooks, state, effects, DOM events, browser APIs, bundlers, imports/exports, module systems, async state, TypeScript errors, JS tests, Node scripts, or contributing to widely used JS frameworks and libraries such as React. Use it especially when debugging runtime behavior, making source-traced JS/TS changes, or preparing an upstream-quality pull request to a major open-source JS framework."
+description: "JavaScript/TypeScript runtime, modules, bundlers, browser/Node behavior, and framework-core contributions. Use react-engineer for React application components, hooks, and framework behavior."
 ---
 
 # JavaScript Engineer
@@ -16,10 +16,11 @@ Detect which altitude you are in before writing. App code is allowed to be pragm
 
 ## Lead vs. Defer
 
-Lead with this skill when the main risk is JS/TS behavior: browser interactions, component state, hooks, DOM APIs, Node scripts, bundler/module resolution, type errors, or JS-focused tests.
+Lead with this skill for JS/TS runtime, DOM, Node, modules, tooling, types, or framework-core contributions.
 
 Prefer another skill when it is a better owner:
 
+- `react-engineer`: React application components, hooks, state, effects, and framework behavior. Add this skill only for a distinct runtime, module, or tooling question.
 - `rails-engineer`: Rails routing/controllers/views/models or server-rendered HTML ownership. Use this skill only for the JS side after inspecting the rendered markup and data attributes.
 - `frontend-design`: visual direction, typography, layout identity.
 - `frontend-animator`: motion design, transitions, gesture physics, animation performance.
@@ -33,16 +34,6 @@ Prefer another skill when it is a better owner:
 - **Use the package manager the repository already uses.** Detect it from the lockfile and `package.json` before running anything: `pnpm-lock.yaml` -> pnpm, `yarn.lock` -> yarn, `package-lock.json`/`npm-shrinkwrap.json` -> npm, `bun.lockb` -> bun. Upstream framework repos have their own manager and you must match it (React uses yarn). Do not impose a personal default, and do not convert a repo's manager. For the user's own app, prefer `pnpm`.
 - Local repository evidence wins. If guidance here conflicts with project conventions, state the conflict and choose the smallest evidence-backed path.
 - For version-sensitive libraries or unfamiliar APIs, check installed versions and read official docs or source before coding.
-
-### Bundled references
-
-Read only the reference whose trigger matches the task:
-
-- `references/react-craft.md` — load for the React mental model: pure render, state snapshots, batching, derived state, effects as synchronization, deps/cleanup, Strict Mode, keys/identity, context vs composition, reducers, custom hooks.
-- `references/react-concurrency-and-performance.md` — load for concurrent rendering, transitions, Suspense, deferred values, memoization, virtualization, code-splitting, hydration, and SSR/server-component boundaries.
-- `references/react-framework-contribution.md` — load for contributing to facebook/react or a major JS framework: feature flags, `__DEV__`/invariant, package boundaries, test/lint/Flow gates, semver, changelog, CLA.
-- `references/typescript-craft.md` — load for TypeScript at library quality: strictness, narrowing, discriminated unions, generics/variance, API-surface typing, declaration emit.
-- `references/javascript-runtime.md` — load for event loop, Promises/async, cancellation, ESM/CJS, import resolution, SSR-unsafe APIs, streams, and resource cleanup.
 
 ## Reconnaissance Before Editing
 
@@ -66,7 +57,7 @@ Build a short runtime map before changing code:
 
 ## React Engineering
 
-React is the primary framework depth in this skill. Treat React code as a synchronization system, not a render loop.
+Use this section for React-core contributions or a React/JavaScript runtime boundary. Ordinary React application work belongs to `react-engineer`. Treat React code as a synchronization system, not a render loop.
 
 ### Rendering and State Model
 

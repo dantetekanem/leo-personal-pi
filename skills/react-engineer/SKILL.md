@@ -67,20 +67,6 @@ Before relying on React or framework behavior:
 4. Do not assume React 19, React Compiler, Server Components, server actions, Suspense data fetching, or framework defaults are available. Gate advice by installed versions and config.
 5. If docs and existing project convention conflict, report the conflict and take the smallest path that matches the app unless the user asks for modernization.
 
-Compact references:
-
-- React docs/API: https://react.dev/
-- React legacy/version context: https://legacy.reactjs.org/
-- Next.js docs: https://nextjs.org/docs
-- Remix docs: https://remix.run/docs
-- React Router docs: https://reactrouter.com/
-- TanStack Query docs: https://tanstack.com/query/latest
-- Testing Library docs: https://testing-library.com/docs/
-- Playwright docs: https://playwright.dev/docs/intro
-- TypeScript docs: https://www.typescriptlang.org/docs/
-- MDN Web Docs: https://developer.mozilla.org/
-- WAI-ARIA Authoring Practices: https://www.w3.org/WAI/ARIA/apg/
-
 ## First Reconnaissance
 
 Inspect the smallest relevant slice, but enough to avoid framework guessing:

@@ -2,17 +2,14 @@
 
 Deep, documented guidance for the judgment pillar of the team-leader skill. Read this
 when a task involves architecture, design trade-offs, scale, technical strategy, or any
-decision whose cost of being wrong is high. Each class gives the principle, the reasoning,
-and the documented source.
-
-Back to `../SKILL.md`.
+decision whose cost of being wrong is high. Each class gives the principle and reasoning.
 
 ---
 
 ## 1. How staff/principal engineers operate
 
-Principal-level impact comes from leverage, not personal output. The four documented
-Staff-plus archetypes describe the modes (source: [Staff archetypes — StaffEng](https://staffeng.com/guides/staff-archetypes/)):
+Principal-level impact comes from leverage, not personal output. Four staff-plus
+archetypes describe the modes:
 
 - **Tech Lead** — guides the approach and execution of one team or a cluster.
 - **Architect** — owns direction, quality, and approach within a critical, enduring domain,
@@ -21,15 +18,14 @@ Staff-plus archetypes describe the modes (source: [Staff archetypes — StaffEng
 - **Solver** — digs deep into arbitrarily complex, high-execution-risk problems.
 - **Right Hand** — extends an executive's scope and authority in large organizations.
 
-The common operating model (source: [Operating at Staff — StaffEng](https://staffeng.com/guides/operating-at-staff/),
-[What do Staff engineers actually do?](https://staffeng.com/guides/what-do-staff-engineers-actually-do/)):
+The common operating model:
 
 - **Own an important problem space**, not a backlog of tickets.
 - **Translate business goals into engineering strategy** — architecture, technology choices.
 - **Influence through alignment and technical direction**, not authority.
 - **Scale others** by delegating, unblocking, and shaping execution.
 - Apply **systems thinking**: see the whole system and its feedback loops, not just the
-  component you are editing (source: [Systems thinking — StaffEng](https://staffeng.com/guides/systems-thinking/)).
+  component you are editing.
 
 **Rule.** Match the operating mode to the problem. Measure your impact by the leverage you
 create and the problems that stop recurring, not by lines of code or agents spawned.
@@ -45,7 +41,7 @@ cheap.
 
 - Distinguish **essential complexity** (the domain requires it) from **accidental
   complexity** (history, copy-paste, premature abstraction). Extend the former; delete the
-  latter. (Concept from "No Silver Bullet," Brooks, 1986.)
+  latter.
 - Prefer **deepening a good existing structure** over bolting on a parallel one. Ask:
   "what would this look like if it were designed well for its actual job?" and move toward
   that incrementally.
@@ -61,7 +57,7 @@ For ambiguous or contentious designs, decide in writing. The point is not docume
 its own sake; it is finding issues while change is still cheap and forcing the trade-offs
 into the open.
 
-Design-doc structure (source: [Design Docs at Google — Malte Ubl](https://www.industrialempathy.com/posts/design-docs-at-google/)):
+Design-doc structure:
 
 - **Context and scope** — objective facts only.
 - **Goals and non-goals** — non-goals are things that *could* be goals but are explicitly
@@ -72,10 +68,8 @@ Design-doc structure (source: [Design Docs at Google — Malte Ubl](https://www.
 - **Cross-cutting concerns** — security, privacy, observability, always considered.
 
 When a full doc is overhead, an **Architecture Decision Record** captures a single
-significant decision: context, options, decision, consequences (source:
-[Architecture Decision Records — Martin Fowler](https://martinfowler.com/bliki/ArchitectureDecisionRecord.html),
-[adr.github.io](https://adr.github.io/)). List the **serious alternatives with pros and
-cons** and the **trade-offs** behind the choice.
+significant decision: context, options, decision, consequences. List the **serious
+alternatives with pros and cons** and the **trade-offs** behind the choice.
 
 **Rule.** Write a design doc when the solution is ambiguous or contentious and the cost of
 being wrong is high; write an ADR for a single consequential decision. If a "design doc"
@@ -85,8 +79,7 @@ contains no trade-offs or alternatives, the design was obvious — just build it
 
 ## 4. Work backwards from the customer / outcome
 
-Before designing, force clarity about what you are actually building and for whom. Amazon's
-Working Backwards process (source: [Working Backwards — Werner Vogels](https://www.allthingsdistributed.com/2006/11/working_backwards.html)):
+Before designing, force clarity about what you are actually building and for whom:
 
 1. Write the **press release** — what the thing does and why it exists, in plain language.
 2. Write the **FAQ** — the questions that surface the real scope.
@@ -120,8 +113,7 @@ the job, not a distraction from it.
 
 ## 6. Choose work that matters
 
-Senior time is the scarcest resource; spend it where it moves the outcome (source:
-[Work on what matters — StaffEng](https://staffeng.com/guides/work-on-what-matters)):
+Senior time is the scarcest resource; spend it where it moves the outcome:
 
 - **Avoid snacking** (easy, low-impact work), **preening** (low-impact, high-visibility),
   and **chasing ghosts** (re-fighting your last company's battles in a new context).
@@ -141,8 +133,7 @@ the orchestration layer.
 ## 7. Learn from failure, blamelessly
 
 Incidents are inevitable at scale; the discipline is learning from them so they do not
-recur (source: [Postmortem Culture — Google SRE](https://sre.google/sre-book/postmortem-culture/),
-[Blameless postmortems — Google SRE Workbook](https://sre.google/workbook/postmortem-culture/)):
+recur:
 
 - Focus on **what failed in the system and process**, not who to blame.
 - Find the **root cause(s) and contributing factors**, not just the triggering event.

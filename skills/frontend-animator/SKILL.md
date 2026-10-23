@@ -50,8 +50,6 @@ Prefer naming tokens by use, not by raw values: `motion.micro`, `motion.componen
 
 ## Library decision guide
 
-Read `references/motion-library-guide.md` when choosing or justifying an animation library.
-
 Fast defaults:
 
 - CSS transitions/keyframes: simple hover, focus, disclosure, opacity, transform, small loading states, and effects that do not need orchestration.

@@ -1,9 +1,5 @@
 # Ruby Craft for Rails
 
-> Return to [SKILL.md](../SKILL.md) for core principles, boundaries, and reference-selection rules.
-
-Load this reference when correctness depends on Ruby's object model, language semantics, metaprogramming, performance, concurrency, or durable object design.
-
 Rails is Ruby, and the framework's elegance is a direct product of Ruby's design. An elite Rails engineer is first an elite Ruby engineer: fluent in the object model, precise about semantics, able to read the DSL-heavy style the Rails codebase is written in, and able to write code that survives for years. Write Ruby the way the Rails and Ruby core teams write it: plain, expressive, and built to last.
 
 ## Object Model and Semantics

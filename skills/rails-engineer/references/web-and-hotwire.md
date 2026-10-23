@@ -1,9 +1,5 @@
 # Rails Web and Hotwire Reference
 
-> Return to [SKILL.md](../SKILL.md) for core principles, boundaries, and reference-selection rules.
-
-Load this reference when work touches controllers, routing, params, response semantics, server-rendered views, forms, Turbo, Stimulus, or Rails-integrated JavaScript.
-
 ## Controllers and HTTP
 
 - Prefer resourceful routes and conventional actions. Custom member/collection routes should express real domain verbs.

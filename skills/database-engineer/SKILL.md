@@ -1,11 +1,13 @@
 ---
 name: database-engineer
-description: Database engineering expert for schema design, relational modeling, SQL correctness, query plans, indexing, constraints, transactions, locks, migrations, data integrity, and production database performance. Use whenever work touches tables, indexes, slow queries, N+1s, migrations, PostgreSQL/MySQL/SQLite behavior, isolation levels, deadlocks, uniqueness, foreign keys, multi-tenant data boundaries, or “why is this query slow?”. Prefer this skill over generic backend advice when correctness or performance depends on database semantics.
+description: "Database-engine semantics that determine correctness or performance: schema/DDL, constraints, SQL plans, locks, transactions, and concurrency. Use rails-engineer for routine Active Record and Rails migration conventions."
 ---
 
 # Database Engineer
 
 Protect data integrity first, then make database behavior explainable and performant. Ground every recommendation in the actual engine, schema, data shape, SQL, and runtime evidence.
+
+For routine Active Record associations, preloading, or Rails migration conventions, use `rails-engineer`. Add this skill when query plans, constraints, DDL locking, or transaction semantics need database-specific analysis.
 
 ## Operating stance
 
@@ -19,14 +21,6 @@ Protect data integrity first, then make database behavior explainable and perfor
 ## Documentation discipline
 
 Use the installed database version and official docs for behavior that changes by engine/version. Do not assume PostgreSQL, MySQL, and SQLite have the same locking, indexing, isolation, DDL, or constraint behavior.
-
-PostgreSQL sources to check when relevant:
-
-- EXPLAIN and plan interpretation: https://www.postgresql.org/docs/current/using-explain.html
-- EXPLAIN command safety, especially `ANALYZE`: https://www.postgresql.org/docs/current/sql-explain.html
-- Indexes and planner behavior: https://www.postgresql.org/docs/current/indexes.html
-- Constraints and data integrity: https://www.postgresql.org/docs/current/ddl-constraints.html
-- Explicit locking, lock modes, and deadlocks: https://www.postgresql.org/docs/current/explicit-locking.html
 
 For MySQL/MariaDB, SQLite, hosted databases, and ORM-specific behavior, confirm the exact version and adapter documentation before giving engine-specific advice.
 

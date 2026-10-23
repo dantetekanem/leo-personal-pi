@@ -51,9 +51,6 @@ Set the top-level `theme` setting to `dracula`.
 
 ## Lumon preset
 
-The base palette comes from Basecamp Omarchy's Lumon theme:
-https://github.com/basecamp/omarchy/blob/master/themes/lumon/colors.toml
-
 The warm semantic colors used for errors, success, and warnings are deliberate accessibility exceptions to the otherwise monochromatic Lumon palette.
 
 ### Ghostty

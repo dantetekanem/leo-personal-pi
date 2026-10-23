@@ -35,12 +35,12 @@ Do not use this for small rename/extract-method cleanup. Use the ordinary refact
 8. Verify each slice. If there are no tests, add or request the smallest characterization safety net before risky moves.
 9. Keep the refactor focused. Do not mix in feature work, style churn, dependency upgrades, or opportunistic cleanup.
 
-## Research Backbone
+## Design principles
 
 Apply these ideas tersely; do not turn the answer into an essay.
 
-- Parnas: decompose around hidden design decisions, not procedural flowcharts.
-- Fowler/Beck: large classes/files are change-risk smells; refactor in small, compiling, tested steps.
+- Decompose around hidden design decisions, not procedural flowcharts.
+- Large classes/files are change-risk smells; refactor in small, compiling, tested steps.
 - Cohesion/coupling: code that changes together belongs together; unrelated change reasons must separate.
 - SOLID: use SRP, ISP, and DIP to reduce change blast radius; use OCP only where real variants exist.
 - Composition over inheritance: default to explicit collaborators; use inheritance/mixins only when the contract is obvious and stable.

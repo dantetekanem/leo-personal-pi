@@ -4,7 +4,7 @@ description: |
   Rewrite AI-sounding text so it reads naturally without changing what it says.
   Use when editing or reviewing prose for inflated claims,
   sales language, vague sources, repetitive structure, stock AI words, passive
-  voice, filler, or chatbot artifacts. Based on Wikipedia's "Signs of AI writing."
+  voice, filler, or chatbot artifacts.
 license: MIT
 metadata:
   version: "2.11.2"
@@ -13,8 +13,6 @@ metadata:
 # Humanizer: remove AI writing patterns
 
 Rewrite AI-sounding text so it reads like the writer, not a chatbot. Do not change what it says or make up details.
-
-The patterns below come from Wikipedia's ["Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), maintained by WikiProject AI Cleanup.
 
 ## What to do
 
@@ -448,9 +446,3 @@ These details often carry the writer's voice. Keep them unless they hurt the mea
 4. Write the final version. State each point naturally instead of patching one flagged phrase at a time. If a sentence stays awkward, rewrite the paragraph around its main point. Apply the dash rule in §14.
 
 Return the result required by [How to return the result](#how-to-return-the-result).
-
-## Source
-
-This skill is based on [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), maintained by WikiProject AI Cleanup. Its patterns come from reviews of AI-generated text on Wikipedia.
-
-Wikipedia's main point: "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."

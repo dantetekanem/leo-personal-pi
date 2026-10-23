@@ -1,9 +1,5 @@
 # Rails 8 Features Reference
 
-> Return to [SKILL.md](../SKILL.md) for core principles, boundaries, and reference-selection rules.
-
-Load this reference only after confirming the installed Rails version and local configuration, when Rails 8 feature specifics are central to the task.
-
 ## Contents
 
 - [The Solid Trifecta: Database-Backed Infrastructure](#the-solid-trifecta-database-backed-infrastructure)

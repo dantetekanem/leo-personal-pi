@@ -1,13 +1,8 @@
 # Rails Concurrency, Data Integrity, and Input-Safety Reference
 
-> Return to [SKILL.md](../SKILL.md) for core principles, boundaries, and reference-selection rules.
+Deep, concrete guidance for the highest-severity production defect classes. Each class gives the failure mode, a realistic example, and the expert rule.
 
-Deep, concrete guidance for the highest-severity production defect classes. Read this
-when a change touches money, inventory, uniqueness, deletion, bulk writes, time,
-untrusted input, webhooks, outbound fetching, custom threads, or large-scale querying.
-Each class gives the failure mode, a realistic example, and the expert rule.
-
-This is the detailed companion to the one-liners in `SKILL.md`. Current as of Rails 8.1.
+Current as of Rails 8.1.
 
 ---
 
@@ -64,8 +59,7 @@ to a lagging replica; the GET 404s, the user retries, and a duplicate record is 
 **Rule.** Any correctness-dependent post-write read must stay on the writer — explicit
 `connected_to(role: :writing)` or verified writer-stickiness (e.g. the
 `DatabaseSelector`/session delay) — until the replication window is safe. Treat
-`:reading` connections as **stale by design**. See
-`references/database-patterns.md` for replica config.
+`:reading` connections as **stale by design**.
 
 ---
 
@@ -159,7 +153,7 @@ to show a total; traffic saturates DB CPU and the app falls over.
 **Rule.** Never put an unbounded exact `COUNT`/`SUM` on a hot path without plan-and-latency
 proof. Use bounded/cached/pre-aggregated counters, or explicitly approximate
 database-specific estimates (e.g. PostgreSQL `reltuples`) when exactness is not a product
-requirement. See `references/database-patterns.md#efficient-counting`.
+requirement.
 
 ---
 

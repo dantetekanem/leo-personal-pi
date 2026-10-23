@@ -18,9 +18,7 @@ Use this guide to choose the smallest animation tool that can deliver premium mo
 | Ready-made animated sections/components | SmoothUI, Magic UI, Aceternity UI, Glin UI, Glass UI, or shadcn-style registries | Good for inspiration and acceleration, but audit dependency weight, source quality, accessibility, and visual fit before adopting. |
 | Liquid/glass design system | Tokenized CSS surfaces first; Glin UI / Glass UI patterns when a full glass system is desired | Glass needs contrast, fallbacks, reduced transparency/motion behavior, and strict performance budgeting. |
 
-## Current market snapshot, June 2026
-
-Recent research shows a split ecosystem rather than a single winner:
+## Additional selection guidance
 
 - **React product UI default:** Motion / Framer Motion remains the safe default for React apps because it covers layout animation, enter/exit, gestures, scroll values, and state-driven micro-interactions with React-native ergonomics.
 - **Advanced choreography default:** GSAP remains the strongest choice for scroll-driven storytelling, pinned/scrubbed timelines, SVG/text/plugin-heavy work, and agency/marketing motion where imperative timeline control is an advantage.
@@ -29,24 +27,7 @@ Recent research shows a split ecosystem rather than a single winner:
 - **Small-polish utilities:** AutoAnimate is high-ROI for list/layout changes; Lenis is common for smooth scroll foundations; Anime.js is a good lightweight creative engine when React integration is not the main need.
 - **Prebuilt motion/component layer:** SmoothUI, Magic UI, Aceternity UI, Glin UI, Glass UI, and newer text kits such as Trickle/slot-text are useful references for modern effects. Treat younger/low-adoption packages as source inspiration until their maintenance, accessibility, and dependency story is proven.
 
-NPM last-month download counts checked 2026-06-14:
-
-| Package | Downloads |
-| --- | ---: |
-| `framer-motion` | 147,946,377 |
-| `motion` | 52,611,880 |
-| `lottie-web` | 24,255,562 |
-| `@react-spring/web` | 19,529,038 |
-| `gsap` | 12,924,435 |
-| `lottie-react` | 10,614,492 |
-| `@gsap/react` | 3,884,159 |
-| `@formkit/auto-animate` | 3,720,393 |
-| `animejs` | 3,531,625 |
-| `@rive-app/react-canvas` | 3,013,574 |
-| `lenis` | 3,007,897 |
-| `slot-text` | 1,865 |
-
-Use these counts as adoption signal, not quality proof. The best choice still depends on stack, animation complexity, accessibility, bundle budget, and whether the team wants source-owned components or long-term package dependencies.
+Treat download counts as adoption signals, not quality proof. Choose based on stack, animation complexity, accessibility, bundle budget, and whether the team wants source-owned components or long-term package dependencies.
 
 ## Practical selection rules
 
@@ -72,25 +53,3 @@ Use these counts as adoption signal, not quality proof. The best choice still de
 - Preserve focus, keyboard access, and screen-reader text.
 - For split text, expose the complete original phrase with ARIA and hide animated fragments from assistive tech.
 - Keep important copy readable; avoid long decorative text effects on critical content.
-
-## Source links checked while drafting
-
-- Motion for React docs: https://motion.dev/docs/react
-- Motion homepage / feature overview: https://motion.dev/
-- Motion AnimateView / View Transition notes: https://motion.dev/docs/react-animate-view
-- GSAP React patterns: https://gsap.com/resources/react-basics
-- Anime.js module imports: https://animejs.com/documentation/getting-started/module-imports
-- MDN animation performance and frame rate: https://developer.mozilla.org/en-US/docs/Web/Performance/Guides/Animation_performance_and_frame_rate
-- MDN CSS and JavaScript animation performance: https://developer.mozilla.org/en-US/docs/Web/Performance/Guides/CSS_JavaScript_animation_performance
-- MDN will-change: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/will-change
-- MDN prefers-reduced-motion: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion
-- MDN View Transition API: https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API
-- textmotion.dev / slot-text: https://textmotion.dev/
-- slot-text repository: https://github.com/Danilaa1/slot-text
-- SmoothUI: https://smoothui.dev/
-- Magic UI repository: https://github.com/magicuidesign/magicui
-- Aceternity UI: https://ui.aceternity.com/
-- Glin UI: https://glinui.com/
-- Glass UI: https://glass-ui.crenspire.com/
-- Trickle text animation kit: https://tricklekit.dev/
-- NPM downloads API: https://api.npmjs.org/downloads/point/last-month/<package>

@@ -66,24 +66,9 @@ Do not assume Rails defaults from memory. Generated defaults, upgraded apps, and
 - Do not assume Rails 8 generated authentication, Solid adapters, Kamal, Thruster, Propshaft, or importmap exist in upgraded/custom apps.
 - For gem APIs, inspect installed version docs/source before changing behavior. Use edge docs only when explicitly researching unreleased behavior.
 
-### Bundled references
-
-Read only the references whose trigger matches the task:
-
-- `references/database-patterns.md` — load for Active Record modeling, query shape, indexes, N+1s, counting, batching, replicas, migrations, EXPLAIN, and monitoring.
-- `references/debugging-playbooks.md` — load for request, data, autoloading, Hotwire, or async debugging and for layer-specific verification commands.
-- `references/framework-contribution.md` — load for work in `rails/rails` or a major Rails framework/engine that must meet upstream contribution standards.
-- `references/jobs-runtime.md` — load for request critical paths, deferred work, jobs, mailers, cache, cable, storage, credentials, instrumentation, or production runtime behavior.
-- `references/rails-concurrency-and-safety.md` — load for concurrency, integrity, atomic writes, deletion, time, untrusted input, webhooks, SSRF, pool safety, or PII/logging risks.
-- `references/rails8-features.md` — load for version-gated Rails 8 features such as Solid Queue/Cache/Cable, generated authentication, `params.expect`, and Propshaft.
-- `references/ruby-craft.md` — load when Ruby semantics, metaprogramming, allocation/performance, concurrency, or object design is central.
-- `references/web-and-hotwire.md` — load for routing, controllers, params, response semantics, views, forms, Turbo, Stimulus, or Rails-integrated JavaScript.
-
 ## Contributing to Rails Itself (Framework Mode)
 
 Framework changes must minimize maintainer burden and preserve public contracts: isolate one concern, prove it with a failing-then-passing regression test, reason about compatibility and deprecation, run the relevant component/adapter coverage, and avoid drive-by edits. Treat undocumented internals differently from documented public APIs, and verify current contribution rules before preparing a patch.
-
-Read `references/framework-contribution.md` for bug-report templates, test commands, adapter matrices, warnings, benchmarks, framework defaults, changelog rules, commit guidance, and official documentation links.
 
 ## Rails-Native Architecture Judgment
 
@@ -111,7 +96,7 @@ Ask what the caller should say in the business language:
 
 Good concerns express a real capability (`Searchable`, `Trashable`, `Billable`) and own one cohesive slice of associations/scopes/validations/callbacks/methods. Bad concerns are technical buckets (`Helpers`, `SharedMethods`, `Callbacks`, `Utilities`) or exist only because a file is long.
 
-Good callbacks normalize local attributes, maintain local invariants, or run after-commit effects that require committed data. Suspicious callbacks hide product workflows, authorization assumptions, network calls, payment/API calls, many emails/jobs, or persistence inside persistence callbacks. Use explicit domain methods when a user/business action should be visible at the call site. An external side effect in `after_create` (pre-commit) is a correctness bug, not just a smell — it runs inside the transaction and can fire on rollback; use `after_create_commit`/`after_commit` and prefer a job. Read `references/jobs-runtime.md` for critical-path and deferred-side-effect depth.
+Good callbacks normalize local attributes, maintain local invariants, or run after-commit effects that require committed data. Suspicious callbacks hide product workflows, authorization assumptions, network calls, payment/API calls, many emails/jobs, or persistence inside persistence callbacks. Use explicit domain methods when a user/business action should be visible at the call site. An external side effect in `after_create` (pre-commit) is a correctness bug, not just a smell — it runs inside the transaction and can fire on rollback; use `after_create_commit`/`after_commit` and prefer a job.
 
 Deviate from vanilla Rails only under concrete pressure: a real non-record domain concept, an integration boundary, a workflow with its own lifecycle, performance/security/compliance needs, or an existing coherent app pattern. Do not import repositories/use-cases/service layers because another ecosystem prefers them.
 
@@ -119,43 +104,31 @@ Deviate from vanilla Rails only under concrete pressure: a real non-record domai
 
 Use Ruby precisely: understand the receiver, method lookup, arity, keyword/block forwarding, visibility, constants, mutation, exceptions, and threaded-process implications before reaching for framework machinery. Prefer idiomatic language constructs, small public APIs, composition and duck types, restrained metaprogramming, Zeitwerk-aligned constants, narrow exception handling, explicit ownership, and measured—not folkloric—performance choices. CRuby's GVL does not remove races.
 
-Read `references/ruby-craft.md` when the task requires object-model tracing, DSL/metaprogramming design, allocation analysis, mutation semantics, concurrency reasoning, or detailed durable-Ruby guidance.
-
 ## Active Record and Data Modeling
 
 Model ownership, cardinality, lifecycle, retention, and authorization honestly. Keep relational data relational, return composable relations until materialization is intentional, and design queries and indexes from real SQL shape rather than folklore. Validations improve UX; constraints preserve truth under races and non-Rails writers. Transactions, locks, bulk APIs, replicas, and migrations all have adapter- and deployment-specific semantics that must be proven from the installed stack.
-
-Read `references/database-patterns.md` for association/data-shape decisions, query materialization, index and plan analysis, N+1s, counting, batching, replicas, and migration choreography. Read `references/rails-concurrency-and-safety.md` for isolation, locking, atomic writes, counters, deletion, money, temporal correctness, and bypass APIs.
 
 ## Request Critical Path and Deferred Work
 
 Define the critical path from response and integrity requirements. Keep transactions short, never hold a connection or lock across network I/O, enqueue committed-data work after commit, and use a durable intent/outbox when the commit-to-publish gap matters. Moving work to a job does not remove its cost; measure round trips, decomposed wall clock, connection-hold time, lock exposure, and bounded downstream concurrency.
 
-Read `references/jobs-runtime.md` for the full request-budget, callback-side-effect, durable-deferment, and resource-measurement playbook.
-
 ## Controllers, Routing, Views, and Hotwire
 
 Keep controllers as visible HTTP boundaries: scoped loading and authorization, explicit params, one domain mutation, and a conventional response. Prefer resourceful routes, server-rendered HTML, Rails helpers, and progressive enhancement. Use Turbo for navigation or server-rendered replacement and Stimulus for small DOM behavior; inspect the app's JavaScript stack before advising.
-
-Read `references/web-and-hotwire.md` for routing, params, flash/status semantics, API preservation, Turbo contracts and debugging, Stimulus boundaries, CSRF, and stack-specific decision rules.
 
 ## Security Boundaries
 
 Scope authorization into the relation that fetches the record and carry tenant/account/permission dimensions through every synchronous and asynchronous boundary. Treat all params, HTML, redirects, uploads, tokens, webhook bodies, URLs, serialized bytes, and resource sizes as untrusted. Preserve Rails escaping and CSRF, allowlist input and output shapes, protect secrets and PII, and prove unauthenticated, unauthorized, and cross-tenant behavior for sensitive changes.
 
-Read `references/rails-concurrency-and-safety.md` for the detailed security boundary checklist and defect playbooks covering strong params, serialization, webhooks, SSRF, deserialization, input bounds, state transitions, and log redaction.
-
 ## Jobs, Mailers, Cache, Cable, Storage, and Runtime
 
 Make jobs idempotent under retries, duplicates, process death, deploys, and partial completion; enqueue work that needs committed records after commit. Treat mail, cache, cable, storage, credentials, and error reporting as configured runtime boundaries with tenant/permission dimensions, failure semantics, and observed production evidence—not assumed defaults.
 
-Read `references/jobs-runtime.md` for adapter inspection, Solid Queue behavior, mail URL/delivery rules, cache invalidation, cable authorization, storage access, credential rotation, instrumentation, and production-evidence checks. Use `references/rails8-features.md` only after confirming the installed Rails and adapter versions.
+Confirm the installed Rails and adapter versions before relying on Rails 8 feature behavior.
 
 ## Debugging and Verification
 
 Debug from a falsifiable hypothesis and trace the failing contract end to end. Reproduce at the narrowest useful layer, inspect the runtime/configuration facts that control behavior, and verify with a behavior-visible regression test when edits are in scope. Use the existing test stack; coordinate broad strategy with `test-expert`, and report skipped checks and residual risk exactly.
-
-Read `references/debugging-playbooks.md` for request/controller, Active Record, Ruby/autoloading, Hotwire, and job/mailer playbooks plus layer-specific verification commands.
 
 ## Refactoring Standard
 

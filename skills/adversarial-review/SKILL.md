@@ -106,8 +106,4 @@ Adapted for Pi from Matt Pocock's `grill-with-docs` skill at commit `391a2701dd9
 
 ### Open GSD — MIT
 
-The bounded goal-backward review gates adapt concepts from Open GSD's plan checker and PLAN format. Official sources:
-
-- https://github.com/open-gsd/gsd-core
-- https://github.com/open-gsd/gsd-core/blob/next/docs/how-to/plan-a-phase.md
-- https://github.com/open-gsd/gsd-core/blob/next/docs/reference/plan-md.md
+The bounded goal-backward review gates adapt concepts from Open GSD's plan checker and PLAN format.

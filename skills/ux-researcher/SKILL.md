@@ -21,12 +21,6 @@ Use this skill to turn product uncertainty into practical research plans, ethica
 
 When method details, participant handling, consent/privacy, accessibility, or public-sector-style research rigor matter, check current authoritative guidance before finalizing the plan or citing standards. Prefer official/current sources over memory.
 
-Useful anchors:
-
-- NN/g method-selection framework: https://www.nngroup.com/articles/which-ux-research-methods/
-- GOV.UK user research service manual: https://www.gov.uk/service-manual/user-research
-- W3C WAI guidance on involving users with disabilities: https://www.w3.org/WAI/planning/involving-users/
-
 Use those sources to ground method selection around: attitudinal vs. behavioral evidence, qualitative vs. quantitative evidence, context of product use, product phase, informed consent, participant privacy, disabled participants, analysis, and sharing findings.
 
 ## First move

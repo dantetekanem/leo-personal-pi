@@ -1,6 +1,6 @@
 ---
 name: prompt-cost-auditor
-description: Analyze Pi session token and prompt overhead from session logs, runtime settings, tool catalogs, extension prompt injections, skills, and context files. Use whenever User asks why a Pi turn cost many tokens, what was sent in the first prompt, which prompt/tool sources are responsible, or how to optimize prompt context. Produce a numbers-first rendered report with token counts, percentages, source paths, confidence levels, and usefulness classifications; do not give generic disable/split-profile opinions.
+description: Analyze Pi session token and prompt overhead from session logs, runtime settings, tool catalogs, extension prompt injections, skills, and context files. Use whenever User asks why a Pi turn cost many tokens, what was sent in the first prompt, which prompt/tool sources are responsible, or how to optimize prompt context. Produce a numbers-first report with token counts, percentages, source paths, confidence levels, and usefulness classifications; do not give generic disable/split-profile opinions.
 ---
 
 # Prompt Cost Auditor
@@ -17,7 +17,7 @@ Use this skill to audit Pi prompt/token overhead with evidence. The output is a 
 
 ## When to write and render a report
 
-If User asks for a rendered or useful report, write a Markdown report to a temporary or explicit path, then render it with `glow_render`. If User asks only to investigate/check, stay read-only and present the report in the main window without writing a file unless User explicitly asks for a file.
+If the user asks for a report file, write Markdown to the requested or temporary path. For an investigation/check, stay read-only and present the report without writing a file unless requested. Render only with a suitable available tool; otherwise return Markdown or the authorized file path.
 
 Good default path for rendered reports:
 
@@ -68,16 +68,11 @@ For the target assistant request, capture:
 - stopReason
 - tool calls made
 
-For a cold first request followed by a cached continuation/finalization, use the follow-up `cacheRead` as the exact static cacheable prefix when available.
+Keep provider-reported usage fields separate. Confirm whether `input` includes cached tokens before calculating request input; never double-count them.
 
-Calculations:
+`cacheRead` measures reused tokens, which may include user messages, conversation, and tool results. It cannot establish an exact static/dynamic split, and later cache reads may exceed the first request's input.
 
-```text
-static cacheable prefix % = cacheRead_on_followup / first_input * 100
-dynamic first-turn % = (first_input - cacheRead_on_followup) / first_input * 100
-```
-
-If there is no follow-up `cacheRead`, do not invent an exact static prefix. Report only the exact first input and explain that static/dynamic split is unavailable.
+Only call component attribution exact when the actual request components and matching tokenization are available. Otherwise use source-based estimates, label their method, and leave unknown categories unallocated. Compute component percentages against the first request's total input, not just its uncached portion.
 
 ### 3. Identify what was set
 
@@ -135,7 +130,7 @@ Recommended families:
 - Teams/agents/tasks: `team_create`, `spawn_teammate`, inbox, shared memory, file claims, team tasks, shutdown tools.
 - Memory/session/skill management: `memory`, `memory_search`, `session_search`, `skill_manage`.
 - Chrome/browser control: `chrome_*` tools.
-- Web/ask/review/render: `web_search`, `web_fetch`, `ask_user`, `open_code_diff`, `submit_pr_review`, `glow_render`.
+- Web/ask/review/render: `web_search`, `web_fetch`, `ask_user`, `open_code_diff`, `submit_pr_review`, and any available renderer.
 - Loops/monitors/tasks: `Loop*`, `Monitor*`, `Task*`.
 - Domain tools: French learning, Home Assistant, project-specific tools, or other package-specific tools.
 - Wrapper/meta tools: `multi_tool_use.parallel` or similar.
@@ -154,11 +149,11 @@ Use exact measurements where possible, then estimate only what cannot be measure
 
 A safe method:
 
-1. Start with exact first input tokens.
-2. Use follow-up `cacheRead` as exact static prefix if available.
+1. Start with the first request's total input, interpreting cache fields according to provider semantics.
+2. Attribute exact components only with actual request and tokenization evidence; otherwise label reconstruction or estimates.
 3. Estimate visible text prompt components from source byte counts and loaded prompt snippets.
-4. Treat tool schemas as a residual/estimated category if raw request tools are not available.
-5. Label residuals clearly: `Estimated residual: static prefix minus measured/reconstructed prompt text components`.
+4. Leave unmeasured tool schemas and remaining overhead unallocated, or report a clearly labeled estimated remainder.
+5. Do not label a remainder as tool cost alone; it can also include harness instructions, memory, and other context.
 
 Do not overfit estimates. Prefer ranges when data is weak.
 
@@ -194,9 +189,8 @@ Use this structure:
 # Pi Prompt Cost Audit: <session or turn>
 
 ## Executive summary
-- First input: N tokens
-- Static cacheable prefix: N tokens (P%)
-- Dynamic turn content: N tokens (P%)
+- First request input (including any cached portion): N tokens
+- Static/dynamic split: measured with request-component evidence, or unknown
 - Model/thinking: provider/model, thinking
 - Main cost drivers: concise ranked list with confidence
 
@@ -225,16 +219,16 @@ List missing raw payloads, tokenizer limitations, or unavailable source data.
 List commands used to produce the report.
 ```
 
-Numbers matter. Percentages should use the first input token count as denominator unless the table says otherwise.
+Numbers matter. Percentages should use the first request's total input count as denominator unless the table says otherwise.
 
-### 9. Render the report when requested
+### 9. Render with available tools
 
-If a Markdown file was created, call `glow_render` with the report path. Do not dump long Markdown through shell output.
+If a Markdown file was authorized and created, use an available renderer when requested. If none is available, return the path and say that it was not rendered. Do not require a named renderer or start/install one without explicit permission.
 
 ## Pitfalls
 
 - Do not say “exactly what was sent” if the raw provider request body is not logged. Say “exact from log” and “reconstructed from runtime sources.”
-- Do not use `totalTokens` as the first input. Use `usage.input` for input attribution; show output and total separately.
+- Do not use `totalTokens` as request input: it includes output. Interpret `usage.input`, `cacheRead`, and `cacheWrite` using the provider's field semantics; show each separately.
 - Do not count cached tokens as free. They are part of displayed total and may be billed differently by provider.
 - Do not blame the user message when static prompt/tool prefix dominates.
 - Do not recommend split profiles or disabling as a default answer. The report should analyze usefulness and loading strategy.
@@ -246,10 +240,10 @@ If a Markdown file was created, call `glow_render` with the report path. Do not 
 
 Before finalizing, confirm the report contains:
 
-- Exact first input token count.
+- First request input token count with provider/cache semantics stated.
 - Exact model and thinking level.
 - Exact target session path.
-- Exact static/dynamic split if cache evidence exists, or a clear statement that it does not.
+- Static/dynamic split only with request-component evidence; otherwise explicitly unknown.
 - At least one table with tokens and percentages.
 - Source paths for every major category.
 - Confidence labels for exact/reconstructed/estimated/unknown values.

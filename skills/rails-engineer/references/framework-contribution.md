@@ -1,9 +1,5 @@
 # Rails Framework Contribution Reference
 
-> Return to [SKILL.md](../SKILL.md) for core principles, boundaries, and reference-selection rules.
-
-Load this reference when the target is `rails/rails` or a major Rails framework or engine and the work must meet the upstream merge bar.
-
 ## Contribution posture
 
 When the target is `rails/rails` or a major engine (turbo-rails, stimulus-rails, solid_queue, kamal), the merge bar is different from app work. The reviewer is a core maintainer whose scarcest resource is review time, and the change lands in a codebase used by millions of apps, so compatibility and restraint matter more than cleverness.
@@ -35,15 +31,3 @@ When the target is `rails/rails` or a major engine (turbo-rails, stimulus-rails,
 
 - Rails is a framework of public contracts. Methods marked `:nodoc:` or nested under `private` are internal and free to change; the documented public API is not. Do not expand the public surface casually, and do not treat internal helpers as stable extension points for apps.
 - Keep changes minimal and idiomatic. The best upstream patch is usually the smallest one that a maintainer can merge with confidence and backport cleanly.
-
-## Current documentation
-
-- Rails Guides: https://guides.rubyonrails.org/
-- Rails API: https://api.rubyonrails.org/
-- Rails Doctrine: https://rubyonrails.org/doctrine
-- Rails Release Notes: https://guides.rubyonrails.org/releases.html
-- Active Record Querying: https://guides.rubyonrails.org/active_record_querying.html
-- Active Record Migrations: https://guides.rubyonrails.org/active_record_migrations.html
-- Rails Security Guide: https://guides.rubyonrails.org/security.html
-- Autoloading/Zeitwerk: https://guides.rubyonrails.org/autoloading_and_reloading_constants.html
-- Ruby Docs: https://docs.ruby-lang.org/

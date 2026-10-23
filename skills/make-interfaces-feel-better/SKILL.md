@@ -7,15 +7,6 @@ description: Design engineering principles for making interfaces feel polished. 
 
 Great interfaces rarely come from a single thing. It's usually a collection of small details that compound into a great experience. Apply these principles when building or reviewing UI code.
 
-## Quick Reference
-
-| Category | When to Use |
-| --- | --- |
-| [Typography](typography.md) | Text wrapping, font smoothing, tabular numbers |
-| [Surfaces](surfaces.md) | Border radius, optical alignment, shadows, image outlines, hit areas |
-| [Animations](animations.md) | Interruptible animations, enter/exit transitions, icon animations, scale on press |
-| [Performance](performance.md) | Transition specificity, `will-change` usage |
-
 ## Core Principles
 
 ### 1. Concentric Border Radius
@@ -139,10 +130,3 @@ Rows should cite the specific file and the specific property that changed when i
 - [ ] No `transition: all` — only specific properties
 - [ ] `will-change` only on transform/opacity/filter, never `all`
 - [ ] Interactive elements have at least 40×40px hit area
-
-## Reference Files
-
-- [typography.md](typography.md) — Text wrapping, font smoothing, tabular numbers
-- [surfaces.md](surfaces.md) — Border radius, optical alignment, shadows, image outlines
-- [animations.md](animations.md) — Interruptible animations, enter/exit transitions, icon animations, scale on press
-- [performance.md](performance.md) — Transition specificity, `will-change` usage

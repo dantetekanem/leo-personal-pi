@@ -1,9 +1,5 @@
 # Rails Jobs and Runtime Reference
 
-> Return to [SKILL.md](../SKILL.md) for core principles, boundaries, and reference-selection rules.
-
-Load this reference when work touches request critical paths, deferred side effects, jobs, mailers, cache, cable, storage, credentials, instrumentation, or production runtime behavior.
-
 ## Request Critical Path and Deferred Work
 
 A Rails master treats every request as a budget of scarce resources — round trips, wall clock, DB connections, locks — and designs the critical path to spend as little of each as possible. Query count is only the visible symptom; the real units are below. Reach for this analysis by default on any endpoint that does non-trivial work, and prove it with measurement, not intuition.
@@ -25,7 +21,7 @@ A Rails master treats every request as a budget of scarce resources — round tr
 ### HTTP and side effects in callbacks
 
 - An HTTP call (or any external side effect) inside an Active Record callback is a defect, and inside `after_create` it is worse than a stylistic smell: the record is not committed yet, so the call runs inside the transaction (holding the connection), fires even if the transaction later rolls back (ghost email/webhook/analytics), and cannot be safely retried. Use `after_create_commit` / `after_commit` for anything that must observe committed data — and prefer enqueueing a job over doing the I/O inline even there.
-- Callbacks that hide product workflows — network calls, mail, payments, many jobs, persistence of unrelated records — are a structural smell regardless of timing. If saving a record sends mail, hits an API, or writes 30 unrelated rows, that behavior belongs in an explicit domain method the caller can see, not in a persistence callback. See "Concerns, Callbacks, and Deviations" in `SKILL.md`.
+- Callbacks that hide product workflows — network calls, mail, payments, many jobs, persistence of unrelated records — are a structural smell regardless of timing. If saving a record sends mail, hits an API, or writes 30 unrelated rows, that behavior belongs in an explicit domain method the caller can see, not in a persistence callback.
 - Prefer `deliver_later` for mail in request paths; `deliver_now` inside a request is an external HTTP call on the critical path.
 
 ## Jobs, Mailers, Cache, Cable, Storage, and Runtime
